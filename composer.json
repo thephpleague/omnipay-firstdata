@@ -24,7 +24,7 @@
         }
     ],
     "autoload": {
-        "psr-0": { "Omnipay\\FirstData\\" : "src/" }
+        "psr-4": { "Omnipay\\FirstData\\" : "src/" }
     },
     "require": {
         "omnipay/common": "~2.0"
