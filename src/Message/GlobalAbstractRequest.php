@@ -7,7 +7,6 @@ namespace Omnipay\FirstData\Message;
  */
 abstract class GlobalAbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
-    private static $userAgent = 'TWDA New Castle LLC';
     const API_VERSION = 'v11';
 
     protected $liveEndpoint = 'https://api.globalgatewaye4.firstdata.com/transaction/';
@@ -43,7 +42,7 @@ abstract class GlobalAbstractRequest extends \Omnipay\Common\Message\AbstractReq
         'discover' => 'Discover',
         'amex' => 'American Express',
         'diners_club' => 'Diners Club',
-        'jcb' => 'JCB', //'Gift Card', 'PayPal'
+        'jcb' => 'JCB',
     );
 
     public function getGatewayid()
@@ -98,7 +97,6 @@ abstract class GlobalAbstractRequest extends \Omnipay\Common\Message\AbstractReq
     protected function getHeaders()
     {
         return array(
-            'User-Agent' => self::$userAgent,
             'Content-Type: application/json; charset=UTF-8;',
             'Accept: application/json'
         );
@@ -123,7 +121,7 @@ abstract class GlobalAbstractRequest extends \Omnipay\Common\Message\AbstractReq
 
     protected function createResponse($data)
     {
-        return $this->response = new Response($this, $data);
+        return $this->response = new GlobalResponse($this, $data);
     }
 
     public static function getCardType($type)

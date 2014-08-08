@@ -23,14 +23,9 @@ class GlobalGateway extends AbstractGateway
         return 'First Data Global';
     }
 
-    public function authorize(array $parameters = array())
-    {
-        return $this->createRequest('\Omnipay\FirstData\Message\FirstData', $parameters);
-    }
-
     public function purchase(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\FirstData\Message\PurchaseRequest', $parameters);
+        return $this->createRequest('\Omnipay\FirstData\Message\GlobalPurchaseRequest', $parameters);
     }
 
     public function getDefaultParameters()

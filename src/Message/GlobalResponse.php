@@ -6,9 +6,9 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
 /**
- * PayPal Response
+ * First Data Global Response
  */
-class GlobalResponse extends GlobalAbstractResponse
+class GlobalResponse extends AbstractResponse
 {
     public function __construct(RequestInterface $request, $data)
     {
@@ -18,7 +18,7 @@ class GlobalResponse extends GlobalAbstractResponse
 
     public function isSuccessful()
     {
-        return ($this->data['exact_resp_code'] == '00')?true:false;
+        return ($this->data['exact_resp_code'] == '00') ? true : false;
     }
 
     public function getTransactionReference()
