@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\FirstData2\Message;
+namespace Omnipay\FirstData\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
@@ -8,7 +8,7 @@ use Omnipay\Common\Message\RequestInterface;
 /**
  * PayPal Response
  */
-class Response extends AbstractResponse
+class GlobalResponse extends GlobalAbstractResponse
 {
     public function __construct(RequestInterface $request, $data)
     {

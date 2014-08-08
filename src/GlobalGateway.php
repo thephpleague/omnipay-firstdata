@@ -1,6 +1,6 @@
 <?php
 
-namespace Omnipay\FirstData2;
+namespace Omnipay\FirstData;
 
 use Omnipay\Common\AbstractGateway;
 
@@ -25,12 +25,12 @@ class GlobalGateway extends AbstractGateway
 
     public function authorize(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\FirstData2\Message\FirstData', $parameters);
+        return $this->createRequest('\Omnipay\FirstData\Message\FirstData', $parameters);
     }
 
     public function purchase(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\FirstData2\Message\PurchaseRequest', $parameters);
+        return $this->createRequest('\Omnipay\FirstData\Message\PurchaseRequest', $parameters);
     }
 
     public function getDefaultParameters()

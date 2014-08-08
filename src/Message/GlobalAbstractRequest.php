@@ -1,11 +1,11 @@
 <?php
 
-namespace Omnipay\FirstData2\Message;
+namespace Omnipay\FirstData\Message;
 
 /**
  * First Data Abstract Request
  */
-abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
+abstract class GlobalAbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
     private static $userAgent = 'TWDA New Castle LLC';
     const API_VERSION = 'v11';
@@ -36,6 +36,15 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     const TRAN_BALANCEINQUIRY = '86';
     const TRAN_RELOAD = '88';
     const TRAN_DEACTIVATION = '89';
+
+    protected static $cardTypes = array(
+        'visa' => 'Visa',
+        'mastercard' => 'Mastercard',
+        'discover' => 'Discover',
+        'amex' => 'American Express',
+        'diners_club' => 'Diners Club',
+        'jcb' => 'JCB', //'Gift Card', 'PayPal'
+    );
 
     public function getGatewayid()
     {
@@ -86,7 +95,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $data;
     }
 
-    protected function getHeaders(){
+    protected function getHeaders()
+    {
         return array(
             'User-Agent' => self::$userAgent,
             'Content-Type: application/json; charset=UTF-8;',
@@ -101,7 +111,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             $this->getHeaders(),
             $data
         );
-        $client->getCurlOptions()->set(CURLOPT_PORT,443);
+        $client->getCurlOptions()->set(CURLOPT_PORT, 443);
         $httpResponse = $client->send();
         return $this->createResponse($httpResponse->getBody());
     }
@@ -116,17 +126,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->response = new Response($this, $data);
     }
 
-    protected static $card_types = array(
-        'visa' => 'Visa',
-        'mastercard' => 'Mastercard',
-        'discover' => 'Discover',
-        'amex' => 'American Express',
-        'diners_club' => 'Diners Club',
-        'jcb' => 'JCB', //'Gift Card', 'PayPal'
-    );
-    public static function get_card_type($type){
-        if(isset(self::$card_types[$type])){
-            return self::$card_types[$type];
+    public static function getCardType($type)
+    {
+        if (isset(self::$cardTypes[$type])) {
+            return self::$cardTypes[$type];
         }
         return $type;
     }
