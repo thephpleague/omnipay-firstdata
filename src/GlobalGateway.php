@@ -28,6 +28,11 @@ class GlobalGateway extends AbstractGateway
         return $this->createRequest('\Omnipay\FirstData\Message\GlobalPurchaseRequest', $parameters);
     }
 
+    public function authorize(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\FirstData\Message\GlobalAuthorizeRequest', $parameters);
+    }
+
     public function getDefaultParameters()
     {
         return array(
@@ -37,12 +42,12 @@ class GlobalGateway extends AbstractGateway
         );
     }
 
-    public function getGatewayid()
+    public function getGatewayId()
     {
         return $this->getParameter('gatewayid');
     }
 
-    public function setGatewayid($value)
+    public function setGatewayId($value)
     {
         return $this->setParameter('gatewayid', $value);
     }

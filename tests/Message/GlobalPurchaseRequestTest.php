@@ -18,9 +18,27 @@ class GlobalPurchaseRequestTest extends TestCase
         );
 
         $data = $request->getData();
+        $this->assertEquals('00', $data['transaction_type']);
         $this->assertEquals('4111111111111111', $data['cc_number']);
         $this->assertEquals('Visa', $data['credit_card_type']);
         $this->assertEquals('12.00', $data['amount']);
         $this->assertEquals('123 Billing St|12345|Billstown|CA|US', $data['cc_verification_str1']);
+    }
+
+    public function testPurchaseSuccessMaestroType()
+    {
+        $options = array(
+            'amount' => '12.00',
+            'card' => $this->getValidCard(),
+        );
+
+        $options['card']['number'] = '6304000000000000';
+
+        $request = new GlobalPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $request->initialize($options);
+
+        $data = $request->getData();
+        $this->assertEquals('00', $data['transaction_type']);
+        $this->assertEquals('maestro', $data['credit_card_type']);
     }
 }
