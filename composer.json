@@ -11,7 +11,7 @@
         "pay",
         "payment"
     ],
-    "homepage": "https://github.com/omnipay/firstdata",
+    "homepage": "https://github.com/thephpleague/omnipay-firstdata",
     "license": "MIT",
     "authors": [
         {
@@ -20,7 +20,7 @@
         },
         {
             "name": "Omnipay Contributors",
-            "homepage": "https://github.com/omnipay/firstdata/contributors"
+            "homepage": "https://github.com/thephpleague/omnipay-firstdata/contributors"
         }
     ],
     "autoload": {
