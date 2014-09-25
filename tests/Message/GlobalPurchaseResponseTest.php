@@ -14,10 +14,11 @@ class GlobalPurchaseResponseTest extends TestCase
             'exact_resp_code' => 00,
             'exact_message' => 'Transaction Normal',
             'reference_no' => 'abc123',
+            'authorization_num' => 'auth1234',
         )));
 
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals('abc123', $response->getTransactionReference());
+        $this->assertEquals('auth1234', $response->getTransactionReference());
         $this->assertSame('Transaction Normal', $response->getMessage());
         $this->assertEquals('00', $response->getCode());
     }
@@ -29,10 +30,11 @@ class GlobalPurchaseResponseTest extends TestCase
             'exact_resp_code' => 22,
             'exact_message' => 'Invalid Credit Card Number',
             'reference_no' => 'abc123',
+            'authorization_num' => 'auth1234',
         )));
 
         $this->assertFalse($response->isSuccessful());
-        $this->assertEquals('abc123', $response->getTransactionReference());
+        $this->assertEquals('auth1234', $response->getTransactionReference());
         $this->assertSame('Invalid Credit Card Number', $response->getMessage());
         $this->assertEquals('22', $response->getCode());
     }
