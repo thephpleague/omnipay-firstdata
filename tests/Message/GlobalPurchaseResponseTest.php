@@ -15,6 +15,7 @@ class GlobalPurchaseResponseTest extends TestCase
             'exact_message' => 'Transaction Normal',
             'reference_no' => 'abc123',
             'authorization_num' => 'auth1234',
+            'transaction_approved' => 1,
         )));
 
         $this->assertTrue($response->isSuccessful());
@@ -31,6 +32,7 @@ class GlobalPurchaseResponseTest extends TestCase
             'exact_message' => 'Invalid Credit Card Number',
             'reference_no' => 'abc123',
             'authorization_num' => 'auth1234',
+            'transaction_approved' => 0,
         )));
 
         $this->assertFalse($response->isSuccessful());
@@ -38,4 +40,20 @@ class GlobalPurchaseResponseTest extends TestCase
         $this->assertSame('Invalid Credit Card Number', $response->getMessage());
         $this->assertEquals('22', $response->getCode());
     }
+
+    public function testBankError()
+    {
+        $response = new GlobalResponse($this->getMockRequest(), http_build_query(array(
+            'amount' => 1000,
+            'exact_resp_code' => 00,
+            'reference_no' => 'abc123',
+            'authorization_num' => '',
+            'transaction_approved' => 0,
+        )));
+
+        $this->assertFalse($response->isSuccessful());
+        $this->assertEquals('', $response->getTransactionReference());
+        $this->assertEquals('00', $response->getCode());
+    }
+
 }
