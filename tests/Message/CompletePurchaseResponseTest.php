@@ -22,7 +22,7 @@ class CompletePurchaseResponseTest extends TestCase
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertSame('abc123456', $response->getTransactionReference());
+        $this->assertSame('abc123456', $response->getTransactionId());
         $this->assertSame('APPROVED', $response->getMessage());
     }
 
@@ -42,7 +42,7 @@ class CompletePurchaseResponseTest extends TestCase
 
         $this->assertFalse($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertSame('abc1234', $response->getTransactionReference());
+        $this->assertSame('abc1234', $response->getTransactionId());
         $this->assertSame('DECLINED', $response->getMessage());
     }
 }
