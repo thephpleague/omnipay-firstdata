@@ -13,10 +13,15 @@ class CompletePurchaseResponse extends AbstractResponse
     {
         return isset($this->data['status']) && $this->data['status'] == 'APPROVED';
     }
+    
+    public function getTransactionId()
+    {
+        return isset($this->data['oid']) ? $this->data['oid'] : null;
+    }
 
     public function getTransactionReference()
     {
-        return isset($this->data['oid']) ? $this->data['oid'] : null;
+        return isset($this->data['refnumber']) ? $this->data['refnumber'] : null;
     }
 
     public function getMessage()
