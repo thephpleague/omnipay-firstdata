@@ -50,7 +50,7 @@ class GatewayTest extends GatewayTestCase
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertEquals('abc123456', $response->getTransactionReference());
+        $this->assertEquals('abc123456', $response->getTransactionId());
         $this->assertSame('APPROVED', $response->getMessage());
     }
 
@@ -90,7 +90,7 @@ class GatewayTest extends GatewayTestCase
 
         $this->assertFalse($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertEquals('abc1234', $response->getTransactionReference());
+        $this->assertEquals('abc1234', $response->getTransactionId());
         $this->assertSame('DECLINED', $response->getMessage());
     }
 }
