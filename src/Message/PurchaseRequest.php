@@ -37,9 +37,19 @@ class PurchaseRequest extends AbstractRequest
         return $this->getParameter('sharedSecret');
     }
 
+    public function setHostedDataId($value)
+    {
+        return $this->setParameter('hostedDataId', $value);
+    }
+
+    public function getHostedDataId()
+    {
+        return $this->getParameter('hostedDataId');
+    }
+
     public function getData()
     {
-        $this->validate('amount', 'card');
+        $this->validate('amount');
 
         $data = array();
         $data['storename'] = $this->getStoreId();
@@ -53,15 +63,26 @@ class PurchaseRequest extends AbstractRequest
         $data['full_bypass'] = 'true';
         $data['oid'] = $this->getParameter('transactionId');
 
-        $this->getCard()->validate();
+        // Card is only required if no hosteddataid (saved 'data vault' card)
+        if (is_null($this->getHostedDataId())) {
+            $this->validate('card');
+        }
 
-        $data['cardnumber'] = $this->getCard()->getNumber();
-        $data['cvm'] = $this->getCard()->getCvv();
-        $data['expmonth'] = $this->getCard()->getExpiryDate('m');
-        $data['expyear'] = $this->getCard()->getExpiryDate('y');
+        // If a card is passed, validate it
+        if (!is_null($this->getCard())) {
+
+            $this->getCard()->validate();
+
+            $data['cardnumber'] = $this->getCard()->getNumber();
+            $data['cvm'] = $this->getCard()->getCvv();
+            $data['expmonth'] = $this->getCard()->getExpiryDate('m');
+            $data['expyear'] = $this->getCard()->getExpiryDate('y');
+        }
 
         $data['responseSuccessURL'] = $this->getParameter('returnUrl');
         $data['responseFailURL'] = $this->getParameter('returnUrl');
+
+        $data['hosteddataid'] = $this->getHostedDataId();
 
         return $data;
     }

@@ -52,6 +52,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertFalse($response->isRedirect());
         $this->assertEquals('abc123456', $response->getTransactionId());
         $this->assertSame('APPROVED', $response->getMessage());
+        $this->assertNull($response->getTransactionReference());
     }
 
     /**
@@ -92,5 +93,59 @@ class GatewayTest extends GatewayTestCase
         $this->assertFalse($response->isRedirect());
         $this->assertEquals('abc1234', $response->getTransactionId());
         $this->assertSame('DECLINED', $response->getMessage());
+    }
+
+    /**
+     * testPurchaseWithHostedDataId.
+     *
+     * Simulates a purchase with "save this card" selected
+     */
+    public function testPurchaseWithHostedDataId()
+    {
+        $dataId = rand();
+        $this->options['hostedDataId'] = $dataId;
+
+        $response = $this->gateway->purchase($this->options)->send();
+
+        $this->assertFalse($response->isSuccessful());
+        $this->assertTrue($response->isRedirect());
+        $requestData = $response->getRedirectData();
+        $this->assertEquals($dataId, $requestData['hosteddataid']);
+    }
+
+    /**
+     * testPurchaseWithHostedDataIdAndWithoutCard.
+     *
+     * Simulates paying using a saved card, rather than passing card data
+     */
+    public function testPurchaseWithHostedDataIdAndWithoutCard()
+    {
+        $dataId = rand();
+        $this->options['hostedDataId'] = $dataId;
+        unset($this->options['card']);
+
+        $response = $this->gateway->purchase($this->options)->send();
+
+        $this->assertFalse($response->isSuccessful());
+        $this->assertTrue($response->isRedirect());
+        $requestData = $response->getRedirectData();
+        $this->assertEquals($dataId, $requestData['hosteddataid']);
+    }
+
+    /**
+     * testPurchaseErrorWhenMissingHostedDataIdAndWithoutCard.
+     *
+     * Simulates neither hosteddataid or card data being passed, should be caught in app.
+     *
+     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
+     */
+    public function testPurchaseErrorWhenMissingHostedDataIdAndWithoutCard()
+    {
+        unset($this->options['card']);
+
+        $response = $this->gateway->purchase($this->options)->send();
+
+        $this->assertFalse($response->isSuccessful());
+        $this->assertTrue($response->isRedirect());
     }
 }
