@@ -77,10 +77,30 @@ class PurchaseRequest extends AbstractRequest
             $data['cvm'] = $this->getCard()->getCvv();
             $data['expmonth'] = $this->getCard()->getExpiryDate('m');
             $data['expyear'] = $this->getCard()->getExpiryDate('y');
+
+            $data['bname'] = $this->getCard()->getBillingName();
+            $data['baddr1'] = $this->getCard()->getBillingAddress1();
+            $data['baddr2'] = $this->getCard()->getBillingAddress2();
+            $data['bcity'] = $this->getCard()->getBillingCity();
+            $data['bstate'] = $this->getCard()->getBillingState();
+            $data['bcountry'] = $this->getCard()->getBillingCountry();
+            $data['bzip'] = $this->getCard()->getBillingPostcode();
+
+            $data['sname'] = $this->getCard()->getShippingName();
+            $data['saddr1'] = $this->getCard()->getShippingAddress1();
+            $data['saddr2'] = $this->getCard()->getShippingAddress2();
+            $data['scity'] = $this->getCard()->getShippingCity();
+            $data['sstate'] = $this->getCard()->getShippingState();
+            $data['scountry'] = $this->getCard()->getShippingCountry();
+            $data['szip'] = $this->getCard()->getShippingPostcode();
+
+            $data['phone'] = $this->getCard()->getPhone();
+            $data['email'] = $this->getCard()->getEmail();
         }
 
         $data['responseSuccessURL'] = $this->getParameter('returnUrl');
         $data['responseFailURL'] = $this->getParameter('returnUrl');
+
 
         $data['hosteddataid'] = $this->getHostedDataId();
 
