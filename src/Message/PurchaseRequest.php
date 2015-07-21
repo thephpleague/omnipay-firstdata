@@ -47,6 +47,16 @@ class PurchaseRequest extends AbstractRequest
         return $this->getParameter('hostedDataId');
     }
 
+    public function setCustomerId($value)
+    {
+        return $this->setParameter('customerId', $value);
+    }
+
+    public function getCustomerId()
+    {
+        return $this->getParameter('customerId');
+    }
+
     public function getData()
     {
         $this->validate('amount');
@@ -101,6 +111,7 @@ class PurchaseRequest extends AbstractRequest
         $data['responseSuccessURL'] = $this->getParameter('returnUrl');
         $data['responseFailURL'] = $this->getParameter('returnUrl');
 
+        $data['customerid'] = $this->getCustomerId();
 
         $data['hosteddataid'] = $this->getHostedDataId();
 

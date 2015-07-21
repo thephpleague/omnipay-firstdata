@@ -19,7 +19,8 @@ class GatewayTest extends GatewayTestCase
             'returnUrl' => 'https://www.example.com/return',
             'card' => $this->getValidCard(),
             'transactionId' => 'abc123',
-            'currency' => 'GBP'
+            'currency' => 'GBP',
+            'customerId' => 54321
         );
     }
 
