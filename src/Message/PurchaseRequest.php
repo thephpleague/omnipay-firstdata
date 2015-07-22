@@ -3,6 +3,7 @@
 namespace Omnipay\FirstData\Message;
 
 use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Common\Exception\InvalidCreditCardException;
 
 /**
  * FirstDataConnect Authorize Request
@@ -59,7 +60,7 @@ class PurchaseRequest extends AbstractRequest
 
     public function getData()
     {
-        $this->validate('amount');
+        $this->validate('amount', 'card');
 
         $data = array();
         $data['storename'] = $this->getStoreId();
@@ -73,40 +74,37 @@ class PurchaseRequest extends AbstractRequest
         $data['full_bypass'] = 'true';
         $data['oid'] = $this->getParameter('transactionId');
 
-        // Card is only required if no hosteddataid (saved 'data vault' card)
-        if (is_null($this->getHostedDataId())) {
-            $this->validate('card');
-        }
-
-        // If a card is passed, validate it
-        if (!is_null($this->getCard())) {
-
+        // If no hosted data, or a number is passed, validate the whole card
+        if (is_null($this->getHostedDataId()) || !is_null($this->getCard()->getNumber())) {
             $this->getCard()->validate();
-
-            $data['cardnumber'] = $this->getCard()->getNumber();
-            $data['cvm'] = $this->getCard()->getCvv();
-            $data['expmonth'] = $this->getCard()->getExpiryDate('m');
-            $data['expyear'] = $this->getCard()->getExpiryDate('y');
-
-            $data['bname'] = $this->getCard()->getBillingName();
-            $data['baddr1'] = $this->getCard()->getBillingAddress1();
-            $data['baddr2'] = $this->getCard()->getBillingAddress2();
-            $data['bcity'] = $this->getCard()->getBillingCity();
-            $data['bstate'] = $this->getCard()->getBillingState();
-            $data['bcountry'] = $this->getCard()->getBillingCountry();
-            $data['bzip'] = $this->getCard()->getBillingPostcode();
-
-            $data['sname'] = $this->getCard()->getShippingName();
-            $data['saddr1'] = $this->getCard()->getShippingAddress1();
-            $data['saddr2'] = $this->getCard()->getShippingAddress2();
-            $data['scity'] = $this->getCard()->getShippingCity();
-            $data['sstate'] = $this->getCard()->getShippingState();
-            $data['scountry'] = $this->getCard()->getShippingCountry();
-            $data['szip'] = $this->getCard()->getShippingPostcode();
-
-            $data['phone'] = $this->getCard()->getPhone();
-            $data['email'] = $this->getCard()->getEmail();
+        } else if (is_null($this->getCard()->getCvv())) {
+            // Else we only require the cvv when using hosted data
+            throw new InvalidCreditCardException("The CVV parameter is required when using hosteddataid");
         }
+
+        $data['cardnumber'] = $this->getCard()->getNumber();
+        $data['cvm'] = $this->getCard()->getCvv();
+        $data['expmonth'] = $this->getCard()->getExpiryDate('m');
+        $data['expyear'] = $this->getCard()->getExpiryDate('y');
+
+        $data['bname'] = $this->getCard()->getBillingName();
+        $data['baddr1'] = $this->getCard()->getBillingAddress1();
+        $data['baddr2'] = $this->getCard()->getBillingAddress2();
+        $data['bcity'] = $this->getCard()->getBillingCity();
+        $data['bstate'] = $this->getCard()->getBillingState();
+        $data['bcountry'] = $this->getCard()->getBillingCountry();
+        $data['bzip'] = $this->getCard()->getBillingPostcode();
+
+        $data['sname'] = $this->getCard()->getShippingName();
+        $data['saddr1'] = $this->getCard()->getShippingAddress1();
+        $data['saddr2'] = $this->getCard()->getShippingAddress2();
+        $data['scity'] = $this->getCard()->getShippingCity();
+        $data['sstate'] = $this->getCard()->getShippingState();
+        $data['scountry'] = $this->getCard()->getShippingCountry();
+        $data['szip'] = $this->getCard()->getShippingPostcode();
+
+        $data['phone'] = $this->getCard()->getPhone();
+        $data['email'] = $this->getCard()->getEmail();
 
         $data['responseSuccessURL'] = $this->getParameter('returnUrl');
         $data['responseFailURL'] = $this->getParameter('returnUrl');
