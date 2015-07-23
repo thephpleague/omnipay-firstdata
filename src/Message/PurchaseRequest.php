@@ -77,7 +77,7 @@ class PurchaseRequest extends AbstractRequest
         // If no hosted data, or a number is passed, validate the whole card
         if (is_null($this->getHostedDataId()) || !is_null($this->getCard()->getNumber())) {
             $this->getCard()->validate();
-        } else if (is_null($this->getCard()->getCvv())) {
+        } elseif (is_null($this->getCard()->getCvv())) {
             // Else we only require the cvv when using hosted data
             throw new InvalidCreditCardException("The CVV parameter is required when using hosteddataid");
         }
