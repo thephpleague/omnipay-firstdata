@@ -61,4 +61,9 @@ class GlobalGateway extends AbstractGateway
     {
         return $this->setParameter('password', $value);
     }
+
+    public function refund(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\FirstData\Message\GlobalRefundRequest', $parameters);
+    }
 }

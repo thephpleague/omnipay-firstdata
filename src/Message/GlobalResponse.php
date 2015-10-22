@@ -23,6 +23,11 @@ class GlobalResponse extends AbstractResponse
 
     public function getTransactionReference()
     {
+        return $this->data['transaction_tag'];
+    }
+
+    public function getAuthorizationCode()
+    {
         return $this->data['authorization_num'];
     }
 
