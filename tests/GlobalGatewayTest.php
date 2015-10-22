@@ -71,5 +71,4 @@ class GlobalGatewayTest extends GatewayTestCase
         $this->assertEquals('28513493', $response->getTransactionReference());
         $this->assertEquals('ET181147', $response->getAuthorizationCode());
     }
-
 }
