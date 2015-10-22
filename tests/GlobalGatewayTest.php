@@ -37,7 +37,8 @@ class GlobalGatewayTest extends GatewayTestCase
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertEquals('ET181147', $response->getTransactionReference());
+        $this->assertEquals('28513493', $response->getTransactionReference());
+        $this->assertEquals('ET181147', $response->getAuthorizationCode());
     }
 
     public function testAuthorizeSuccess()
@@ -48,6 +49,7 @@ class GlobalGatewayTest extends GatewayTestCase
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
-        $this->assertEquals('ET181147', $response->getTransactionReference());
+        $this->assertEquals('28513493', $response->getTransactionReference());
+        $this->assertEquals('ET181147', $response->getAuthorizationCode());
     }
 }

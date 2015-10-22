@@ -22,25 +22,8 @@ class GlobalRefundRequest extends GlobalAbstractRequest
         return $data;
     }
 
-
-    /**
-     * Get the transaction ID.
-     *
-     * @return string
-     */
     public function getAuthorizationCode()
     {
         return $this->getParameter('authorizationCode');
-    }
-
-    /**
-     * Sets the transaction ID.
-     *
-     * @param string $value
-     * @return AbstractRequest Provides a fluent interface
-     */
-    public function setAuthorizationCode($value)
-    {
-        return $this->setParameter('authorizationCode', $value);
     }
 }
