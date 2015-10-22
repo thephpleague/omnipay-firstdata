@@ -21,6 +21,12 @@ class GlobalGatewayTest extends GatewayTestCase
             'currency' => 'USD',
             'testMode' => true,
         );
+
+        $this->refundOptions = array(
+            'amount' => 13.00,
+            'transactionReference' => '28513493',
+            'authorizationCode' => 'ET181147'
+        );
     }
 
     public function testProperties()
@@ -52,4 +58,18 @@ class GlobalGatewayTest extends GatewayTestCase
         $this->assertEquals('28513493', $response->getTransactionReference());
         $this->assertEquals('ET181147', $response->getAuthorizationCode());
     }
+
+
+    public function testRefundSuccess()
+    {
+        $this->setMockHttpResponse('RefundSuccess.txt');
+
+        $response = $this->gateway->refund($this->refundOptions)->send();
+
+        $this->assertTrue($response->isSuccessful());
+        $this->assertFalse($response->isRedirect());
+        $this->assertEquals('28513493', $response->getTransactionReference());
+        $this->assertEquals('ET181147', $response->getAuthorizationCode());
+    }
+
 }

@@ -26,4 +26,10 @@ class GlobalRefundRequest extends GlobalAbstractRequest
     {
         return $this->getParameter('authorizationCode');
     }
+
+    public function setAuthorizationCode($value)
+    {
+        return $this->setParameter('authorizationCode', $value);
+    }
+
 }
