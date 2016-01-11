@@ -11,9 +11,47 @@ use Omnipay\Common\AbstractGateway;
  * First Data Connect Gateway
  *
  * The First Data Global Gateway Connect 2.0 is a simple payment solution for connecting an
- * online store to the First Data Global Gateway.  It provides redirect based payments
- * (purchase() method with a corresponding completePurchase() method).  It is referred to
- * here as the "First Data Connect" gateway, currently at version 2.0.
+ * online store to the First Data Global Gateway.  It is referred to here as the "First Data
+ * Connect" gateway, currently at version 2.0.
+ *
+ * First Data Connect supports both a redirect method of payment and a direct post
+ * method of payment. So far only the direct post method of payment is supported by
+ * this gateway code.
+ *
+ * ### Form Hosting
+ *
+ * First Data Global Gateway Connect 2.0 allows two ways for collecting payment:
+ *
+ * * A redirect mode which uses the ready-made form pages for the payment process that
+ *   First Data provides. With this option, you forward your customers to First Data
+ *   for payment. They enter the cardholder data on First Data’s  payment page.
+ *   Afterwards, Connect 2.0 redirects the customer back to your website and notifies
+ *   your website of the payment result.
+ *
+ * * You can create your own payment forms and host them on your server. Although your
+ *   server hosts the forms, your website sends the cardholder data directly from the
+ *   customer to the First Data Global Gateway
+ *
+ * ### Payment Modes
+ *
+ * First Data Global Gateway Connect 2.0 supports three different payment modes.
+ *
+ * * In PayOnly mode, First Data Global Gateway Connect 2.0 collects the minimum
+ *   information needed to process a transaction.
+ *
+ * * In PayPlus mode, First Data Global Gateway Connect 2.0 collects the same payment
+ *   information as in PayOnly mode plus a full set of billing information.
+ *
+ * * In FullPay mode, First Data Global Gateway Connect 2.0 collects the same payment
+ *   and billing information collected in PayPlus mode plus shipping information.
+ *
+ * ### Test Accounts
+ *
+ * You can apply for a test account at this URL:
+ *
+ * http://www.firstdata.com/product_solutions/ecommerce/global_gateway/index.htm
+ *
+ * There are some issues with obtaining shared secrets for testing Connect 2.0.
  *
  * ### Example
  *
@@ -34,7 +72,6 @@ use Omnipay\Common\AbstractGateway;
  *     'description'              => 'Your order for widgets',
  *     'amount'                   => '10.00',
  *     'transactionId'            => 12345,
- *     'returnUrl'                => 'http://my.server.name/url_goes_here/12345,
  * ));
  * $response = $transaction->send();
  * if ($response->isSuccessful()) {
