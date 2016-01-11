@@ -1,4 +1,7 @@
 <?php
+/**
+ * First Data Connect Purchase Response
+ */
 
 namespace Omnipay\FirstData\Message;
 
@@ -12,6 +15,7 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
 {
     public function isSuccessful()
     {
+        // FIXME: This makes no sense.
         return false;
     }
 
@@ -22,6 +26,7 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
 
     public function getRedirectUrl()
     {
+        // FIXME: This makes no sense.
         return $this->getRequest()->getEndpoint();
     }
 

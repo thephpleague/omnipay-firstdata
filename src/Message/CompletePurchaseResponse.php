@@ -1,11 +1,14 @@
 <?php
+/**
+ * First Data Connect Complete Purchase Response
+ */
 
 namespace Omnipay\FirstData\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 
 /**
- * FirstDataConnect Response
+ * First Data Connect Complete Purchase Response
  */
 class CompletePurchaseResponse extends AbstractResponse
 {
@@ -13,7 +16,7 @@ class CompletePurchaseResponse extends AbstractResponse
     {
         return isset($this->data['status']) && $this->data['status'] == 'APPROVED';
     }
-    
+
     public function getTransactionId()
     {
         return isset($this->data['oid']) ? $this->data['oid'] : null;
