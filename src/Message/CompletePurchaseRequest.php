@@ -1,11 +1,14 @@
 <?php
+/**
+ * First Data Connect Complete Purchase Request
+ */
 
 namespace Omnipay\FirstData\Message;
 
 use Omnipay\Common\Exception\InvalidResponseException;
 
 /**
- * First Data Connect Complete Authorize Request
+ * First Data Connect Complete Purchase Request
  */
 class CompletePurchaseRequest extends PurchaseRequest
 {
@@ -30,6 +33,7 @@ class CompletePurchaseRequest extends PurchaseRequest
 
     /**
      * Generate a hash string that matches the format of the one returned by the payment gateway
+     *
      * @param  string $amount
      * @param  string $dateTime
      * @param  string $code

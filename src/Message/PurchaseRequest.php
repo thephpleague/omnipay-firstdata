@@ -1,11 +1,14 @@
 <?php
+/**
+ * First Data Connect Purchase Request
+ */
 
 namespace Omnipay\FirstData\Message;
 
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * FirstDataConnect Authorize Request
+ * First Data Connect Purchase Request
  */
 class PurchaseRequest extends AbstractRequest
 {
@@ -17,21 +20,53 @@ class PurchaseRequest extends AbstractRequest
         return date("Y:m:d-H:i:s");
     }
 
-    public function getStoreId()
-    {
-        return $this->getParameter('storeId');
-    }
-
+    /**
+     * Set Store ID
+     *
+     * Calls to the Connect Gateway API are secured with a store ID and
+     * shared secret.
+     *
+     * @return PurchaseRequest provides a fluent interface
+     */
     public function setStoreId($value)
     {
         return $this->setParameter('storeId', $value);
     }
 
+    /**
+     * Get Store ID
+     *
+     * Calls to the Connect Gateway API are secured with a store ID and
+     * shared secret.
+     *
+     * @return string
+     */
+    public function getStoreId()
+    {
+        return $this->getParameter('storeId');
+    }
+
+    /**
+     * Set Shared Secret
+     *
+     * Calls to the Connect Gateway API are secured with a store ID and
+     * shared secret.
+     *
+     * @return PurchaseRequest provides a fluent interface
+     */
     public function setSharedSecret($value)
     {
         return $this->setParameter('sharedSecret', $value);
     }
 
+    /**
+     * Get Shared Secret
+     *
+     * Calls to the Connect Gateway API are secured with a store ID and
+     * shared secret.
+     *
+     * @return string
+     */
     public function getSharedSecret()
     {
         return $this->getParameter('sharedSecret');
@@ -53,6 +88,7 @@ class PurchaseRequest extends AbstractRequest
         $data['full_bypass'] = 'true';
         $data['oid'] = $this->getParameter('transactionId');
 
+        // FIXME: This makes no sense.
         $this->getCard()->validate();
 
         $data['cardnumber'] = $this->getCard()->getNumber();
@@ -66,6 +102,13 @@ class PurchaseRequest extends AbstractRequest
         return $data;
     }
 
+    /**
+     * Returns a SHA-1 hash of the transaction data.
+     *
+     * @param $dateTime
+     * @param $amount
+     * @return string
+     */
     public function createHash($dateTime, $amount)
     {
         $storeId = $this->getStoreId();
