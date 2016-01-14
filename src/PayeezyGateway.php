@@ -90,7 +90,6 @@ use Omnipay\Common\AbstractGateway;
  * Void and Refund transactions require the amount parameter.
  *
  * @link https://support.payeezy.com/hc/en-us
- * @link https://support.payeezy.com/hc/en-us/articles/204029989-First-Data-Payeezy-Gateway-Web-Service-API-Reference-Guide-
  * @link https://provisioning.demo.globalgatewaye4.firstdata.com/signup
  * @link https://support.payeezy.com/hc/en-us/articles/204504235-Using-test-credit-card-numbers
  */
