@@ -3,13 +3,12 @@
 namespace Omnipay\FirstData\Message;
 
 use Omnipay\Tests\TestCase;
-use Omnipay\FirstData\Message\GlobalPurchaseRequest;
 
-class GlobalAuthorizeRequestTest extends TestCase
+class PayeezyAuthorizeRequestTest extends TestCase
 {
-    public function testPurchaseSuccess()
+    public function testAuthorizeSuccess()
     {
-        $request = new GlobalAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $request = new PayeezyAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
         $request->initialize(
             array(
                 'amount' => '12.00',
