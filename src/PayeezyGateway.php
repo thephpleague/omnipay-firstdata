@@ -105,8 +105,8 @@ class PayeezyGateway extends AbstractGateway
         return array(
             'gatewayId' => '',
             'password'  => '',
-            'keyId'  => '',
-            'hmac'  => '',
+            'keyId'     => '',
+            'hmac'      => '',
             'testMode'  => false,
         );
     }
@@ -219,6 +219,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a purchase request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyPurchaseRequest
      */
     public function purchase(array $parameters = array())
@@ -230,6 +231,7 @@ class PayeezyGateway extends AbstractGateway
      * Create an authorize request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyAuthorizeRequest
      */
     public function authorize(array $parameters = array())
@@ -241,6 +243,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a capture request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyCaptureRequest
      */
     public function capture(array $parameters = array())
@@ -252,6 +255,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a refund request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyRefundRequest
      */
     public function refund(array $parameters = array())
@@ -263,6 +267,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a void request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyVoidRequest
      */
     public function void(array $parameters = array())

@@ -166,6 +166,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      * Set transaction type
      *
      * @param int $transactionType
+     *
      * @return PayeezyAbstractRequest provides a fluent interface.
      */
     public function setTransactionType($transactionType)
@@ -229,8 +230,10 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      *
      * @return string
      */
-    protected function composeHashString($contentDigest, $gge4Date, $uri) {
-        return sprintf("%s\n%s\n%s\n%s\n%s",
+    protected function composeHashString($contentDigest, $gge4Date, $uri)
+    {
+        return sprintf(
+            "%s\n%s\n%s\n%s\n%s",
             self::METHOD_POST,
             self::CONTENT_TYPE,
             $contentDigest,
@@ -248,7 +251,8 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function composeAuthString($hashString)
     {
-        return sprintf('GGE4_API %s:%s',
+        return sprintf(
+            'GGE4_API %s:%s',
             $this->getKeyId(),
             base64_encode(hash_hmac("sha1", $hashString, $this->getHmac(), true))
         );
@@ -258,6 +262,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      * Get the card type name, from the card type code.
      *
      * @param string $type
+     *
      * @return string
      */
     public static function getCardType($type)
@@ -314,13 +319,13 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         $url = parse_url($endpoint);
 
         $contentType = self::CONTENT_TYPE;
-        $contentDigest = sha1( json_encode($data));
+        $contentDigest = sha1(json_encode($data));
 
         $hashString = $this->composeHashString($contentDigest, $gge4Date, $url['path']);
 
         $authString = $this->composeAuthString($hashString);
 
-        $headers["Content-Type"] =  $contentType;
+        $headers["Content-Type"] = $contentType;
         $headers["X-GGe4-Content-SHA1"] = $contentDigest;
         $headers["X-GGe4-Date"] = $gge4Date;
         $headers["Authorization"] = $authString;
@@ -343,13 +348,14 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function getEndpoint()
     {
-        return $this->getTestMode() ? $this->testEndpoint.self::API_VERSION : $this->liveEndpoint.self::API_VERSION;
+        return $this->getTestMode() ? $this->testEndpoint . self::API_VERSION : $this->liveEndpoint . self::API_VERSION;
     }
 
     /**
      * Create the response object.
      *
      * @param $data
+     *
      * @return PayeezyResponse
      */
     protected function createResponse($data)
