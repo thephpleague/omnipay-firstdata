@@ -103,8 +103,10 @@ class PayeezyGateway extends AbstractGateway
     public function getDefaultParameters()
     {
         return array(
-            'gatewayid' => '',
+            'gatewayId' => '',
             'password'  => '',
+            'keyId'  => '',
+            'hmac'  => '',
             'testMode'  => false,
         );
     }
@@ -119,7 +121,7 @@ class PayeezyGateway extends AbstractGateway
      */
     public function getGatewayId()
     {
-        return $this->getParameter('gatewayid');
+        return $this->getParameter('gatewayId');
     }
 
     /**
@@ -132,7 +134,7 @@ class PayeezyGateway extends AbstractGateway
      */
     public function setGatewayId($value)
     {
-        return $this->setParameter('gatewayid', $value);
+        return $this->setParameter('gatewayId', $value);
     }
 
     /**
@@ -159,6 +161,58 @@ class PayeezyGateway extends AbstractGateway
     public function setPassword($value)
     {
         return $this->setParameter('password', $value);
+    }
+
+    /**
+     * Get Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return string
+     */
+    public function getKeyId()
+    {
+        return $this->getParameter('keyId');
+    }
+
+    /**
+     * Set Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyGateway provides a fluent interface.
+     */
+    public function setKeyId($value)
+    {
+        return $this->setParameter('keyId', $value);
+    }
+
+    /**
+     * Get Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return string
+     */
+    public function getHmac()
+    {
+        return $this->getParameter('hmac');
+    }
+
+    /**
+     * Set Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyGateway provides a fluent interface.
+     */
+    public function setHmac($value)
+    {
+        return $this->setParameter('hmac', $value);
     }
 
     /**
