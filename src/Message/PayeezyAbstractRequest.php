@@ -230,7 +230,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      *
      * @return string
      */
-    protected function composeHashString($contentDigest, $gge4Date, $uri)
+    protected function buildHashString($contentDigest, $gge4Date, $uri)
     {
         return sprintf(
             "%s\n%s\n%s\n%s\n%s",
@@ -249,7 +249,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      *
      * @return string
      */
-    protected function composeAuthString($hashString)
+    protected function buildAuthString($hashString)
     {
         return sprintf(
             'GGE4_API %s:%s',
@@ -320,9 +320,9 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
 
         $contentDigest = sha1(json_encode($data));
 
-        $hashString = $this->composeHashString($contentDigest, $gge4Date, $url['path']);
+        $hashString = $this->buildHashString($contentDigest, $gge4Date, $url['path']);
 
-        $authString = $this->composeAuthString($hashString);
+        $authString = $this->buildAuthString($hashString);
 
         $headers["X-GGe4-Content-SHA1"] = $contentDigest;
         $headers["X-GGe4-Date"] = $gge4Date;
