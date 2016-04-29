@@ -14,7 +14,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     const METHOD_POST = 'POST';
 
     /** @var string Content type use to calculate the hmac string */
-    const CONTENT_TYPE = 'application/json';
+    const CONTENT_TYPE = 'application/json; charset=UTF-8';
 
     /** API version to use. See the note about the hashing requirements for v12 or higher. */
     const API_VERSION = 'v14';
@@ -208,8 +208,8 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     protected function getHeaders()
     {
         return array(
-            'Content-Type: application/json; charset=UTF-8;',
-            'Accept: application/json'
+            'Content-Type'  => self::CONTENT_TYPE,
+            'Accept'        => 'text/html'
         );
     }
 
@@ -318,24 +318,23 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
 
         $url = parse_url($endpoint);
 
-        $contentType = self::CONTENT_TYPE;
         $contentDigest = sha1(json_encode($data));
 
         $hashString = $this->composeHashString($contentDigest, $gge4Date, $url['path']);
 
         $authString = $this->composeAuthString($hashString);
 
-        $headers["Content-Type"] = $contentType;
         $headers["X-GGe4-Content-SHA1"] = $contentDigest;
         $headers["X-GGe4-Date"] = $gge4Date;
         $headers["Authorization"] = $authString;
-        $headers["Accept"] = $contentType;
 
         $client = $this->httpClient->post(
             $endpoint,
-            $headers,
-            $data
+            $headers
         );
+
+        $client->setBody(json_encode($data), $headers['Content-Type']);
+
         $client->getCurlOptions()->set(CURLOPT_PORT, 443);
         $httpResponse = $client->send();
         return $this->createResponse($httpResponse->getBody());
@@ -348,7 +347,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function getEndpoint()
     {
-        return $this->getTestMode() ? $this->testEndpoint . self::API_VERSION : $this->liveEndpoint . self::API_VERSION;
+        return ($this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint) . self::API_VERSION;
     }
 
     /**
