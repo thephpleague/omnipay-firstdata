@@ -10,8 +10,14 @@ namespace Omnipay\FirstData\Message;
  */
 abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
+    /** @var string Method used to calculate the hmac strings. */
+    const METHOD_POST = 'POST';
+
+    /** @var string Content type use to calculate the hmac string */
+    const CONTENT_TYPE = 'application/json; charset=UTF-8';
+
     /** API version to use. See the note about the hashing requirements for v12 or higher. */
-    const API_VERSION = 'v11';
+    const API_VERSION = 'v14';
 
     /** @var string live endpoint URL base */
     protected $liveEndpoint = 'https://api.globalgatewaye4.firstdata.com/transaction/';
@@ -62,7 +68,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     public function getGatewayId()
     {
-        return $this->getParameter('gatewayid');
+        return $this->getParameter('gatewayId');
     }
 
     /**
@@ -75,7 +81,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     public function setGatewayId($value)
     {
-        return $this->setParameter('gatewayid', $value);
+        return $this->setParameter('gatewayId', $value);
     }
 
     /**
@@ -105,9 +111,62 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     }
 
     /**
+     * Get Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return mixed
+     */
+    public function getKeyId()
+    {
+        return $this->getParameter('keyId');
+    }
+
+    /**
+     * Set Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyAbstractRequest provides a fluent interface.
+     */
+    public function setKeyId($value)
+    {
+        return $this->setParameter('keyId', $value);
+    }
+
+    /**
+     * Get Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return mixed
+     */
+    public function getHmac()
+    {
+        return $this->getParameter('hmac');
+    }
+
+    /**
+     * Set Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyAbstractRequest provides a fluent interface.
+     */
+    public function setHmac($value)
+    {
+        return $this->setParameter('hmac', $value);
+    }
+
+    /**
      * Set transaction type
      *
      * @param int $transactionType
+     *
      * @return PayeezyAbstractRequest provides a fluent interface.
      */
     public function setTransactionType($transactionType)
@@ -149,8 +208,53 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     protected function getHeaders()
     {
         return array(
-            'Content-Type: application/json; charset=UTF-8;',
-            'Accept: application/json'
+            'Content-Type'  => self::CONTENT_TYPE,
+            'Accept'        => 'text/html'
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getGge4Date()
+    {
+        return gmdate("Y-m-d") . 'T' . gmdate("H:i:s") . 'Z';
+    }
+
+    /**
+     * Composes the hash string needed for the newer versions of the API
+     *
+     * @param $contentDigest
+     * @param $gge4Date
+     * @param $uri
+     *
+     * @return string
+     */
+    protected function buildHashString($contentDigest, $gge4Date, $uri)
+    {
+        return sprintf(
+            "%s\n%s\n%s\n%s\n%s",
+            self::METHOD_POST,
+            self::CONTENT_TYPE,
+            $contentDigest,
+            $gge4Date,
+            $uri
+        );
+    }
+
+    /**
+     * Composes the auth string needed for the newer versions of the API
+     *
+     * @param $hashString
+     *
+     * @return string
+     */
+    protected function buildAuthString($hashString)
+    {
+        return sprintf(
+            'GGE4_API %s:%s',
+            $this->getKeyId(),
+            base64_encode(hash_hmac("sha1", $hashString, $this->getHmac(), true))
         );
     }
 
@@ -158,6 +262,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      * Get the card type name, from the card type code.
      *
      * @param string $type
+     *
      * @return string
      */
     public static function getCardType($type)
@@ -190,6 +295,9 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         return implode('|', $parts);
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
         $this->setTransactionType($this->action);
@@ -197,13 +305,36 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         return $data;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return PayeezyResponse
+     */
     public function sendData($data)
     {
+        $headers = $this->getHeaders();
+        $gge4Date = $this->getGge4Date();
+        $endpoint = $this->getEndpoint();
+
+        $url = parse_url($endpoint);
+
+        $contentDigest = sha1(json_encode($data));
+
+        $hashString = $this->buildHashString($contentDigest, $gge4Date, $url['path']);
+
+        $authString = $this->buildAuthString($hashString);
+
+        $headers["X-GGe4-Content-SHA1"] = $contentDigest;
+        $headers["X-GGe4-Date"] = $gge4Date;
+        $headers["Authorization"] = $authString;
+
         $client = $this->httpClient->post(
-            $this->getEndpoint(),
-            $this->getHeaders(),
-            $data
+            $endpoint,
+            $headers
         );
+
+        $client->setBody(json_encode($data), $headers['Content-Type']);
+
         $client->getCurlOptions()->set(CURLOPT_PORT, 443);
         $httpResponse = $client->send();
         return $this->createResponse($httpResponse->getBody());
@@ -216,13 +347,14 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function getEndpoint()
     {
-        return $this->getTestMode() ? $this->testEndpoint.self::API_VERSION : $this->liveEndpoint.self::API_VERSION;
+        return ($this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint) . self::API_VERSION;
     }
 
     /**
      * Create the response object.
      *
      * @param $data
+     *
      * @return PayeezyResponse
      */
     protected function createResponse($data)

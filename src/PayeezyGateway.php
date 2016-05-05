@@ -103,8 +103,10 @@ class PayeezyGateway extends AbstractGateway
     public function getDefaultParameters()
     {
         return array(
-            'gatewayid' => '',
+            'gatewayId' => '',
             'password'  => '',
+            'keyId'     => '',
+            'hmac'      => '',
             'testMode'  => false,
         );
     }
@@ -119,7 +121,7 @@ class PayeezyGateway extends AbstractGateway
      */
     public function getGatewayId()
     {
-        return $this->getParameter('gatewayid');
+        return $this->getParameter('gatewayId');
     }
 
     /**
@@ -132,7 +134,7 @@ class PayeezyGateway extends AbstractGateway
      */
     public function setGatewayId($value)
     {
-        return $this->setParameter('gatewayid', $value);
+        return $this->setParameter('gatewayId', $value);
     }
 
     /**
@@ -162,9 +164,62 @@ class PayeezyGateway extends AbstractGateway
     }
 
     /**
+     * Get Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return string
+     */
+    public function getKeyId()
+    {
+        return $this->getParameter('keyId');
+    }
+
+    /**
+     * Set Key Id
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyGateway provides a fluent interface.
+     */
+    public function setKeyId($value)
+    {
+        return $this->setParameter('keyId', $value);
+    }
+
+    /**
+     * Get Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return string
+     */
+    public function getHmac()
+    {
+        return $this->getParameter('hmac');
+    }
+
+    /**
+     * Set Hmac
+     *
+     * Calls to the Payeezy Gateway API are secured with a gateway ID and
+     * password.
+     *
+     * @return PayeezyGateway provides a fluent interface.
+     */
+    public function setHmac($value)
+    {
+        return $this->setParameter('hmac', $value);
+    }
+
+    /**
      * Create a purchase request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyPurchaseRequest
      */
     public function purchase(array $parameters = array())
@@ -176,6 +231,7 @@ class PayeezyGateway extends AbstractGateway
      * Create an authorize request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyAuthorizeRequest
      */
     public function authorize(array $parameters = array())
@@ -187,6 +243,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a capture request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyCaptureRequest
      */
     public function capture(array $parameters = array())
@@ -198,6 +255,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a refund request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyRefundRequest
      */
     public function refund(array $parameters = array())
@@ -209,6 +267,7 @@ class PayeezyGateway extends AbstractGateway
      * Create a void request.
      *
      * @param array $parameters
+     *
      * @return \Omnipay\FirstData\Message\PayeezyVoidRequest
      */
     public function void(array $parameters = array())
