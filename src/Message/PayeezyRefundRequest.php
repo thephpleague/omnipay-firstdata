@@ -18,11 +18,11 @@ class PayeezyRefundRequest extends PayeezyAbstractRequest
 
         $this->validate('transactionReference', 'amount');
 
-        $data['amount'] = $this->getAmount();
-        $transaction_reference = $this->getTransactionReference();
-        list($auth, $tag) = explode('::', $transaction_reference);
+        $data['amount']            = $this->getAmount();
+        $transaction_reference     = $this->getTransactionReference();
+        list($auth, $tag)          = explode('::', $transaction_reference);
         $data['authorization_num'] = $auth;
-        $data['transaction_tag'] = $tag;
+        $data['transaction_tag']   = $tag;
 
         return $data;
     }

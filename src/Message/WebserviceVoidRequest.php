@@ -48,7 +48,7 @@ namespace Omnipay\FirstData\Message;
 class WebserviceVoidRequest extends WebserviceAbstractRequest
 {
     /** @var string XML template for the void request */
-    protected $xmlTemplate ='
+    protected $xmlTemplate = '
 <fdggwsapi:FDGGWSApiOrderRequest xmlns:v1="http://secure.linkpt.net/fdggwsapi/schemas_us/v1"
     xmlns:fdggwsapi="http://secure.linkpt.net/fdggwsapi/schemas_us/fdggwsapi">
     <v1:Transaction>
