@@ -28,7 +28,7 @@ abstract class WebserviceAbstractRequest extends AbstractRequest
     protected $curl;
 
     /** @var string SOAP template */
-    protected $soapTemplate ='
+    protected $soapTemplate = '
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header />
     <SOAP-ENV:Body>
@@ -38,7 +38,7 @@ abstract class WebserviceAbstractRequest extends AbstractRequest
 ';
 
     /** @var string XML template for the purchase request */
-    protected $xmlTemplate ='';
+    protected $xmlTemplate = '';
 
     /**
      * Get SSL Certificate file name
@@ -354,9 +354,9 @@ abstract class WebserviceAbstractRequest extends AbstractRequest
         // echo "XML Data = $data\n";
 
         // Parse the XML
-        $parser = xml_parser_create_ns();
+        $parser            = xml_parser_create_ns();
         $intermediate_data = array();
-        $parsed_data = array();
+        $parsed_data       = array();
         xml_parse_into_struct($parser, $data, $intermediate_data);
 
         // echo "Intermediate data =\n";
@@ -381,8 +381,8 @@ abstract class WebserviceAbstractRequest extends AbstractRequest
 
         foreach ($intermediate_data as $item) {
             if (! empty($item['value'])) {
-                $parsed_tag = explode(':', $item['tag']);
-                $tag = array_pop($parsed_tag);
+                $parsed_tag        = explode(':', $item['tag']);
+                $tag               = array_pop($parsed_tag);
                 $parsed_data[$tag] = $item['value'];
             }
         }

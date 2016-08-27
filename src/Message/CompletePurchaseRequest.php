@@ -15,10 +15,10 @@ class CompletePurchaseRequest extends PurchaseRequest
     public function getData()
     {
         $theirHash = (string) $this->httpRequest->request->get('response_hash');
-        $dateTime = (string) $this->httpRequest->request->get('txndatetime');
-        $amount = (string) $this->httpRequest->request->get('chargetotal');
-        $code = (string) $this->httpRequest->request->get('approval_code');
-        $ourHash = $this->createResponseHash($amount, $dateTime, $code);
+        $dateTime  = (string) $this->httpRequest->request->get('txndatetime');
+        $amount    = (string) $this->httpRequest->request->get('chargetotal');
+        $code      = (string) $this->httpRequest->request->get('approval_code');
+        $ourHash   = $this->createResponseHash($amount, $dateTime, $code);
         if ($theirHash !== $ourHash) {
             throw new InvalidResponseException("Callback hash does not match expected value");
         }
@@ -43,12 +43,12 @@ class CompletePurchaseRequest extends PurchaseRequest
     {
         $this->validate('storeId', 'sharedSecret', 'currency');
 
-        $storeId = $this->getStoreId();
+        $storeId      = $this->getStoreId();
         $sharedSecret = $this->getSharedSecret();
-        $currency = $this->getCurrencyNumeric();
+        $currency     = $this->getCurrencyNumeric();
 
         $stringToHash = $sharedSecret . $code . $amount . $currency . $dateTime . $storeId;
-        $ascii = bin2hex($stringToHash);
+        $ascii        = bin2hex($stringToHash);
 
         return sha1($ascii);
     }

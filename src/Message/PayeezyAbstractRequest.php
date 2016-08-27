@@ -192,9 +192,9 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function getBaseData()
     {
-        $data = array();
-        $data['gateway_id'] = $this->getGatewayID();
-        $data['password'] = $this->getPassword();
+        $data                     = array();
+        $data['gateway_id']       = $this->getGatewayID();
+        $data['password']         = $this->getPassword();
         $data['transaction_type'] = $this->getTransactionType();
 
         return $data;
@@ -286,7 +286,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     public function getAVSHash()
     {
-        $parts = array();
+        $parts   = array();
         $parts[] = $this->getCard()->getAddress1();
         $parts[] = $this->getCard()->getPostcode();
         $parts[] = $this->getCard()->getCity();
@@ -312,7 +312,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     public function sendData($data)
     {
-        $headers = $this->getHeaders();
+        $headers  = $this->getHeaders();
         $gge4Date = $this->getGge4Date();
         $endpoint = $this->getEndpoint();
 
@@ -325,8 +325,8 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         $authString = $this->buildAuthString($hashString);
 
         $headers["X-GGe4-Content-SHA1"] = $contentDigest;
-        $headers["X-GGe4-Date"] = $gge4Date;
-        $headers["Authorization"] = $authString;
+        $headers["X-GGe4-Date"]         = $gge4Date;
+        $headers["Authorization"]       = $authString;
 
         $client = $this->httpClient->post(
             $endpoint,
