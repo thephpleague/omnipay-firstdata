@@ -5,8 +5,8 @@
 
 namespace Omnipay\FirstData\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\Common\Exception\InvalidCreditCardException;
+use Omnipay\Common\Message\AbstractRequest;
 
 /**
  * First Data Connect Purchase Request
@@ -97,20 +97,20 @@ class PurchaseRequest extends AbstractRequest
     {
         $this->validate('amount', 'card');
 
-        $data = array();
-        $data['storename'] = $this->getStoreId();
-        $data['txntype'] = 'sale';
-        $data['timezone'] = 'GMT';
+        $data                = array();
+        $data['storename']   = $this->getStoreId();
+        $data['txntype']     = 'sale';
+        $data['timezone']    = 'GMT';
         $data['chargetotal'] = $this->getAmount();
         $data['txndatetime'] = $this->getDateTime();
-        $data['hash'] = $this->createHash($data['txndatetime'], $data['chargetotal']);
-        $data['currency'] = $this->getCurrencyNumeric();
-        $data['mode'] = 'payonly';
+        $data['hash']        = $this->createHash($data['txndatetime'], $data['chargetotal']);
+        $data['currency']    = $this->getCurrencyNumeric();
+        $data['mode']        = 'payonly';
         $data['full_bypass'] = 'true';
-        $data['oid'] = $this->getParameter('transactionId');
+        $data['oid']         = $this->getParameter('transactionId');
 
         // If no hosted data, or a number is passed, validate the whole card
-        if (is_null($this->getHostedDataId()) || !is_null($this->getCard()->getNumber())) {
+        if (is_null($this->getHostedDataId()) || ! is_null($this->getCard()->getNumber())) {
             $this->getCard()->validate();
         } elseif (is_null($this->getCard()->getCvv())) {
             // Else we only require the cvv when using hosted data
@@ -118,31 +118,31 @@ class PurchaseRequest extends AbstractRequest
         }
 
         $data['cardnumber'] = $this->getCard()->getNumber();
-        $data['cvm'] = $this->getCard()->getCvv();
-        $data['expmonth'] = $this->getCard()->getExpiryDate('m');
-        $data['expyear'] = $this->getCard()->getExpiryDate('y');
+        $data['cvm']        = $this->getCard()->getCvv();
+        $data['expmonth']   = $this->getCard()->getExpiryDate('m');
+        $data['expyear']    = $this->getCard()->getExpiryDate('y');
 
-        $data['bname'] = $this->getCard()->getBillingName();
-        $data['baddr1'] = $this->getCard()->getBillingAddress1();
-        $data['baddr2'] = $this->getCard()->getBillingAddress2();
-        $data['bcity'] = $this->getCard()->getBillingCity();
-        $data['bstate'] = $this->getCard()->getBillingState();
+        $data['bname']    = $this->getCard()->getBillingName();
+        $data['baddr1']   = $this->getCard()->getBillingAddress1();
+        $data['baddr2']   = $this->getCard()->getBillingAddress2();
+        $data['bcity']    = $this->getCard()->getBillingCity();
+        $data['bstate']   = $this->getCard()->getBillingState();
         $data['bcountry'] = $this->getCard()->getBillingCountry();
-        $data['bzip'] = $this->getCard()->getBillingPostcode();
+        $data['bzip']     = $this->getCard()->getBillingPostcode();
 
-        $data['sname'] = $this->getCard()->getShippingName();
-        $data['saddr1'] = $this->getCard()->getShippingAddress1();
-        $data['saddr2'] = $this->getCard()->getShippingAddress2();
-        $data['scity'] = $this->getCard()->getShippingCity();
-        $data['sstate'] = $this->getCard()->getShippingState();
+        $data['sname']    = $this->getCard()->getShippingName();
+        $data['saddr1']   = $this->getCard()->getShippingAddress1();
+        $data['saddr2']   = $this->getCard()->getShippingAddress2();
+        $data['scity']    = $this->getCard()->getShippingCity();
+        $data['sstate']   = $this->getCard()->getShippingState();
         $data['scountry'] = $this->getCard()->getShippingCountry();
-        $data['szip'] = $this->getCard()->getShippingPostcode();
+        $data['szip']     = $this->getCard()->getShippingPostcode();
 
         $data['phone'] = $this->getCard()->getPhone();
         $data['email'] = $this->getCard()->getEmail();
 
         $data['responseSuccessURL'] = $this->getParameter('returnUrl');
-        $data['responseFailURL'] = $this->getParameter('returnUrl');
+        $data['responseFailURL']    = $this->getParameter('returnUrl');
 
         $data['customerid'] = $this->getCustomerId();
 
@@ -160,11 +160,11 @@ class PurchaseRequest extends AbstractRequest
      */
     public function createHash($dateTime, $amount)
     {
-        $storeId = $this->getStoreId();
+        $storeId      = $this->getStoreId();
         $sharedSecret = $this->getSharedSecret();
-        $currency = $this->getCurrencyNumeric();
+        $currency     = $this->getCurrencyNumeric();
         $stringToHash = $storeId . $dateTime . $amount . $currency . $sharedSecret;
-        $ascii = bin2hex($stringToHash);
+        $ascii        = bin2hex($stringToHash);
 
         return sha1($ascii);
     }
