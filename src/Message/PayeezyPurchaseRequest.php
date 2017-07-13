@@ -122,7 +122,7 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
     }
 
     public function setTokenCardType($value)
-	{
+    {
         return $this->setParameter('tokenCardType', $value);
     }
 }
