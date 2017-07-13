@@ -45,6 +45,30 @@ namespace Omnipay\FirstData\Message;
  *     'clientIp'                 => $_SERVER['REMOTE_ADDR'],
  *     'card'                     => $card,
  * ));
+ *
+ * // USE A TRANS-ARMOR TOKEN TO PROCESS A PURCHASE:
+ *
+ * // Create a credit card object
+ * $card = new CreditCard(array(
+ *     'firstName'            => 'Example',
+ *     'lastName'             => 'Customer',
+ *     'expiryMonth'          => '01',
+ *     'expiryYear'           => '2020',
+ * ));
+ *
+ * // Do a purchase transaction on the gateway
+ * $transaction = $gateway->purchase(array(
+ *     'description'              => 'Your order for widgets',
+ *     'amount'                   => '10.00',
+ *     'cardReference'            => $yourStoredToken,
+ *     'clientIp'                 => $_SERVER['REMOTE_ADDR'],
+ *     'card'                     => $card,
+ *     'tokenCardType'			  => 'visa', // MUST BE VALID CONST FROM \omnipay\common\CreditCard
+ * ));
+ *
+ *
+ *
+ *
  * $response = $transaction->send();
  * if ($response->isSuccessful()) {
  *     echo "Purchase transaction was successful!\n";
@@ -63,23 +87,41 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
 
         $this->validate('amount', 'card');
 
-        $data['amount']        = $this->getAmount();
-        $data['currency_code'] = $this->getCurrency();
-        $data['reference_no']  = $this->getTransactionId();
+		$data['amount'] = $this->getAmount();
+		$data['currency_code'] = $this->getCurrency();
+		$data['reference_no'] = $this->getTransactionId();
 
-        // add credit card details
-        $data['credit_card_type']     = self::getCardType($this->getCard()->getBrand());
-        $data['cc_number']            = $this->getCard()->getNumber();
-        $data['cardholder_name']      = $this->getCard()->getName();
-        $data['cc_expiry']            = $this->getCard()->getExpiryDate('my');
-        $data['cc_verification_str2'] = $this->getCard()->getCvv();
-        $data['cc_verification_str1'] = $this->getAVSHash();
-        $data['cvd_presence_ind']     = 1;
-        $data['cvd_code']             = $this->getCard()->getCvv();
+		// add credit card details
+		if($this->getCardReference()) {
+			$data['transarmor_token'] = $this->getCardReference();
+			$data['credit_card_type'] = $this->getTokenCardType();
+		} else {
+			$data['credit_card_type'] = self::getCardType($this->getCard()->getBrand());
+			$data['cc_number'] = $this->getCard()->getNumber();
+			$data['cc_verification_str2'] = $this->getCard()->getCvv();
+			$data['cc_verification_str1'] = $this->getAVSHash();
+			$data['cvd_presence_ind'] = 1;
+			$data['cvd_code'] = $this->getCard()->getCvv();
+		}
+		$data['cardholder_name'] = $this->getCard()->getName();
+		$data['cc_expiry'] = $this->getCard()->getExpiryDate('my');
 
-        $data['client_ip']    = $this->getClientIp();
-        $data['client_email'] = $this->getCard()->getEmail();
-        $data['language']     = strtoupper($this->getCard()->getCountry());
-        return $data;
+
+		$data['client_ip'] = $this->getClientIp();
+		$data['client_email'] = $this->getCard()->getEmail();
+		$data['language'] = strtoupper($this->getCard()->getCountry());
+
+		return $data;
+
     }
+
+	public function getTokenCardType()
+	{
+		return $this->getParameter('tokenCardType');
+	}
+
+	public function setTokenCardType($value) {
+		return $this->setParameter('tokenCardType', $value);
+	}
+
 }
