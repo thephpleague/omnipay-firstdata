@@ -93,6 +93,7 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
 
 		// add credit card details
 		if($this->getCardReference()) {
+			$this->validate('tokenCardType');
 			$data['transarmor_token'] = $this->getCardReference();
 			$data['credit_card_type'] = $this->getTokenCardType();
 		} else {
