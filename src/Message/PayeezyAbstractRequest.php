@@ -209,7 +209,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     {
         return array(
             'Content-Type'  => self::CONTENT_TYPE,
-            'Accept'        => 'text/html'
+            'Accept'        => 'application/json'
         );
     }
 
