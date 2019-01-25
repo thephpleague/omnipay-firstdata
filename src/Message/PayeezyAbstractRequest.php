@@ -328,16 +328,14 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         $headers["X-GGe4-Date"]         = $gge4Date;
         $headers["Authorization"]       = $authString;
 
-        $client = $this->httpClient->post(
+        $httpResponse = $this->httpClient->request(
+            self::METHOD_POST,
             $endpoint,
-            $headers
+            $headers,
+            json_encode($data)
         );
 
-        $client->setBody(json_encode($data), $headers['Content-Type']);
-
-        $client->getCurlOptions()->set(CURLOPT_PORT, 443);
-        $httpResponse = $client->send();
-        return $this->createResponse($httpResponse->getBody());
+        return $this->createResponse($httpResponse->getBody()->getContents());
     }
 
     /**
