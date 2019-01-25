@@ -113,7 +113,6 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
         $data['language'] = strtoupper($this->getCard()->getCountry());
 
         return $data;
-
     }
 
     public function getTokenCardType()
