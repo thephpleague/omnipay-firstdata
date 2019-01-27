@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/omnipay/firstdata/d/total.png)](https://packagist.org/packages/omnipay/firstdata)
 
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
-processing library for PHP 5.3+. This package implements First Data support for Omnipay.
+processing library for PHP. This package implements First Data support for Omnipay.
 
 ## Installation
 
@@ -17,7 +17,7 @@ to your `composer.json` file:
 ```json
 {
     "require": {
-        "omnipay/firstdata": "~2.0"
+        "omnipay/firstdata": "~3.0"
     }
 }
 ```
