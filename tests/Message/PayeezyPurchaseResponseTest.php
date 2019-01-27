@@ -9,7 +9,7 @@ class PayeezyPurchaseResponseTest extends TestCase
 {
     public function testPurchaseSuccess()
     {
-        $response = new PayeezyResponse($this->getMockRequest(), http_build_query(array(
+        $response = new PayeezyResponse($this->getMockRequest(), json_encode(array(
             'amount' => 1000,
             'exact_resp_code' => 00,
             'exact_message' => 'Transaction Normal',
@@ -26,7 +26,7 @@ class PayeezyPurchaseResponseTest extends TestCase
 
     public function testPurchaseError()
     {
-        $response = new PayeezyResponse($this->getMockRequest(), http_build_query(array(
+        $response = new PayeezyResponse($this->getMockRequest(), json_encode(array(
             'amount' => 1000,
             'exact_resp_code' => 22,
             'exact_message' => 'Invalid Credit Card Number',
@@ -43,7 +43,7 @@ class PayeezyPurchaseResponseTest extends TestCase
 
     public function testBankError()
     {
-        $response = new PayeezyResponse($this->getMockRequest(), http_build_query(array(
+        $response = new PayeezyResponse($this->getMockRequest(), json_encode(array(
             'amount' => 1000,
             'exact_resp_code' => 00,
             'reference_no' => 'abc123',
@@ -55,5 +55,4 @@ class PayeezyPurchaseResponseTest extends TestCase
         $this->assertEquals('::', $response->getTransactionReference());
         $this->assertEquals('00', $response->getCode());
     }
-
 }
