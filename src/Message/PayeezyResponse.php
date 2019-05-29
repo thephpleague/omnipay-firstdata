@@ -120,7 +120,13 @@ class PayeezyResponse extends AbstractResponse
 
     public function getMessage()
     {
-        return $this->getDataItem('exact_message');
+        // bank_message is more human readable. See: https://support.payeezy.com/hc/en-us/articles/206601408-First-Data-Payeezy-Gateway-Web-Service-API-Reference-Guide
+        $message = $this->getDataItem('bank_message');
+        if (empty($message)) {
+            $message = $this->getDataItem('exact_message');
+        }
+
+        return $message;
     }
 
     /**
