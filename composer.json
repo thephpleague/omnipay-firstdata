@@ -28,7 +28,7 @@
     },
     "require": {
         "php": "^5.6|^7",
-        "omnipay/common": "~3.0",
+        "omnipay/common": "~3.0"
     },
     "require-dev": {
         "omnipay/tests": "~3.1"
