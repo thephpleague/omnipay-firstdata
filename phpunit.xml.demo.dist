@@ -10,6 +10,9 @@
     stopOnFailure="false"
     syntaxCheck="false">
     <testsuites>
+        <testsuite name="Omnipay Demo Suite">
+            <directory>./demos/</directory>
+        </testsuite>
         <testsuite name="Omnipay Test Suite">
             <directory>./tests/</directory>
         </testsuite>
@@ -20,5 +23,11 @@
         </whitelist>
     </filter>
     <php>
+        <env name="DEMO_GATEWAYID" value="XXXXXX-XX"/>
+        <env name="DEMO_PASSWORD" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+        <env name="DEMO_HMAC" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+        <env name="DEMO_KEYID" value="######"/>
+        <env name="ACCOUNT_USERNAME" value="username"/>
+        <env name="ACCOUNT_USERNAME" value="password"/>
     </php>
 </phpunit>

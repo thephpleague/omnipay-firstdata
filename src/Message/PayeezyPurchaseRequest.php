@@ -4,6 +4,8 @@
  */
 namespace Omnipay\FirstData\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * First Data Payeezy Purchase Request
  *
@@ -85,6 +87,16 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
     {
         $data = parent::getData();
 
+        if($this->paymentMethod == "card"){
+            return $this->getCardData($data);
+        }else if ($this->paymentMethod == "ach" || $this->paymentMethod == "check"){
+            return $this->getAchData($data);
+        }
+        throw new InvalidRequestException('Invalid Payment Method (Must be "card" or "check")');
+
+    }
+
+    protected function getCardData($data){
         $this->validate('amount', 'card');
 
         $data['amount'] = $this->getAmount();
@@ -97,16 +109,49 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
             $data['transarmor_token'] = $this->getCardReference();
             $data['credit_card_type'] = $this->getTokenCardType();
         } else {
+            $this->getCard()->validate();
             $data['credit_card_type'] = self::getCardType($this->getCard()->getBrand());
             $data['cc_number'] = $this->getCard()->getNumber();
-            $data['cc_verification_str2'] = $this->getCard()->getCvv();
-            $data['cc_verification_str1'] = $this->getAVSHash();
-            $data['cvd_presence_ind'] = 1;
             $data['cvd_code'] = $this->getCard()->getCvv();
+            $data['cvd_code'] = $this->getCard()->getCvv();
+
+            $this->appendAVS($data);
+            $this->appendCvv($data);
         }
         $data['cardholder_name'] = $this->getCard()->getName();
         $data['cc_expiry'] = $this->getCard()->getExpiryDate('my');
 
+        $data['client_ip'] = $this->getClientIp();
+        $data['client_email'] = $this->getCard()->getEmail();
+        $data['language'] = strtoupper($this->getCard()->getCountry());
+
+        return $data;
+    }
+
+    protected function getAchData($data){
+        $this->validate('amount', 'card');
+
+
+        $data['amount'] = $this->getAmount();
+        $data['currency_code'] = $this->getCurrency();
+        $data['reference_no'] = $this->getTransactionId();
+
+        // add credit card details
+        if ($this->getCardReference()) {
+            $this->validate('tokenCardType');
+            $data['transarmor_token'] = $this->getCardReference();
+            $data['credit_card_type'] = $this->getTokenCardType();
+        } else {
+            $data['credit_card_type'] = self::getCardType($this->getAch()->getBrand());
+            $data['cc_number'] = $this->getCard()->getNumber();
+            $data['cvd_code'] = $this->getCard()->getCvv();
+            $data['cvd_code'] = $this->getCard()->getCvv();
+
+            $this->appendAVS($data);
+            $this->appendCvv($data);
+        }
+        $data['cardholder_name'] = $this->getCard()->getName();
+        $data['cc_expiry'] = $this->getCard()->getExpiryDate('my');
 
         $data['client_ip'] = $this->getClientIp();
         $data['client_email'] = $this->getCard()->getEmail();
@@ -124,4 +169,23 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
     {
         return $this->setParameter('tokenCardType', $value);
     }
+
+    protected function appendCvv(&$data){
+        $data['cvd_presence_ind'] = 1;
+        if($this->getApiVersion() <= 13){
+            $data['cc_verification_str2'] = $this->getCard()->getCvv();
+        }else{
+            $data['cvd_code'] = $this->getCard()->getCvv();
+        }
+    }
+
+    protected function appendAVS(&$data)
+    {
+        if($this->getApiVersion() <= 13){
+            $data['cc_verification_str1'] = $this->getAVSHash();
+        }else{
+            $data['address'] = $this->getAddress();
+        }
+    }
 }
+

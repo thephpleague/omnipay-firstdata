@@ -5,6 +5,7 @@
 
 namespace Omnipay\FirstData\Message;
 
+use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
@@ -26,6 +27,13 @@ class PayeezyResponse extends AbstractResponse
     {
         $this->request = $request;
         $this->data = json_decode($data, true);
+
+        if($this->data === "Unauthorized Request. Bad or missing credentials."){
+            throw new InvalidAuthResponseException("Unauthorized Request. Bad or missing credentials.");
+        }
+        if($this->data == null){
+            throw new InvalidResponseException($data ?? "No Response");
+        }
     }
 
     public function isSuccessful()
@@ -118,8 +126,41 @@ class PayeezyResponse extends AbstractResponse
         return $this->getDataItem('transarmor_token');
     }
 
+    /**
+     * Get Message
+     *
+     * A human readable message response and if not then the bank message.
+     *
+     * @return string
+     */
     public function getMessage()
     {
+        $message = $this->getDataItem('bank_message');
+        if (empty($message)) {
+            $message = $this->getDataItem('exact_message');
+        }
+        return $message;
+    }
+
+    /**
+     * Get Bank Response Message
+     *
+     * A message provided by the financial institution describing the Response code above.
+     *
+     * @return string
+     */
+    public function getBankMessage(){
+        return $this->getDataItem('bank_message');
+    }
+
+    /**
+     * Get the Exact Message.
+     *
+     * Message that accompanies the Exact_Resp_code.
+     *
+     * @return string
+     */
+    public function getExactMessage(){
         return $this->getDataItem('exact_message');
     }
 
@@ -136,4 +177,19 @@ class PayeezyResponse extends AbstractResponse
     {
         return $this->getDataItem('exact_resp_code');
     }
+
+    /**
+     * Get the bank response code.
+     *
+     * This is a 2 or 3 digit code, provided by the financial institution, indicating the
+     * approval status of a transaction. The meaning of these codes is defined by the
+     * various financial institutions and is not under the control of the Payeezy Gateway.
+     *
+     * @return string
+     */
+    public function getBankCode()
+    {
+        return $this->getDataItem('bank_resp_code');
+    }
+
 }

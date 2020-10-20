@@ -5,6 +5,9 @@
 
 namespace Omnipay\FirstData\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\FirstData\Ach;
+
 /**
  * First Data Payeezy Abstract Request
  */
@@ -17,7 +20,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     const CONTENT_TYPE = 'application/json; charset=UTF-8';
 
     /** API version to use. See the note about the hashing requirements for v12 or higher. */
-    const API_VERSION = 'v14';
+    protected $apiVersion = 14;
 
     /** @var string live endpoint URL base */
     protected $liveEndpoint = 'https://api.globalgatewaye4.firstdata.com/transaction/';
@@ -27,6 +30,12 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
 
     /** @var int api transaction type */
     protected $transactionType = '00';
+
+    /** @var int api transaction type */
+    protected $customerIdType = 0;
+
+    /** @var string payment method */
+    protected $paymentMethod = 'card';
 
     //
     // Transaction types
@@ -57,6 +66,31 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         'diners_club' => 'Diners Club',
         'jcb'         => 'JCB',
     );
+
+    /**
+     * Get Api Version
+     *
+     * There are mulitple versions of the gateway
+     *
+     * @return string
+     */
+    public function getApiVersion()
+    {
+        return $this->apiVersion;
+    }
+
+    /**
+     * Set The Api Version
+     *
+     * There are mulitple versions of the gateway
+     *
+     * @return PayeezyAbstractRequest provides a fluent interface.
+     */
+    public function setApiVersion($value)
+    {
+        $this->apiVersion = $value;
+        return $this;
+    }
 
     /**
      * Get Gateway ID
@@ -186,6 +220,126 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     }
 
     /**
+     * Set customerIdType
+     *
+     * @param int $customerIdType
+     *
+     * @return PayeezyAbstractRequest provides a fluent interface.
+     */
+    public function setCustomerIdType($customerIdType)
+    {
+        $this->customerIdType = $customerIdType;
+        return $this;
+    }
+
+    /**
+     * Get customerIdType
+     *
+     * @return int
+     */
+    public function getCustomerIdType()
+    {
+        return $this->customerIdType;
+    }
+
+    /**
+     * Set transaction type
+     *
+     * @param int $transactionType
+     *
+     * @return PayeezyAbstractRequest provides a fluent interface.
+     */
+    public function setPaymentMethod($paymentMethod)
+    {
+        $this->paymentMethod = $paymentMethod;
+        return $this;
+    }
+
+    /**
+     * Get transaction type
+     *
+     * @return int
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * Sets the card.
+     *
+     * @param CreditCard $value
+     * @return $this
+     */
+    public function setCard($value)
+    {
+        $card = parent::setCard($value);
+        $this->setPaymentMethod('card');
+        return $card;
+    }
+
+    /**
+     * Get transaction type
+     *
+     * @return bool
+     */
+    public function isCard()
+    {
+        return $this->paymentMethod == 'card';
+    }
+
+    /**
+     * Get transaction type
+     *
+     * @return bool
+     */
+    public function isAch()
+    {
+        return $this->paymentMethod == 'ach' || $this->paymentMethod == 'check';
+    }
+
+    /**
+     * Get the ach.
+     *
+     * @return Ach
+     */
+    public function getAch()
+    {
+        return $this->getParameter('ach');
+    }
+
+    /**
+     * Sets the card.
+     *
+     * @param Ach $value
+     * @return $this
+     */
+    public function setAch($value)
+    {
+        if ($value && !$value instanceof Ach) {
+            $value = new Ach($value);
+        }
+        $this->paymentMethod = 'ach';
+        return $this->setParameter('ach', $value);
+    }
+
+    /**
+     * Get the card or ach depending on the payment method.
+     *
+     * @return CreditCard
+     */
+    public function getPaymentObject()
+    {
+        if($this->isCard()){
+            return $this->getCard();
+        }else if($this->isAch()){
+            return $this->getAch();
+        }
+        throw new InvalidRequestException('Invalid Payment Method (Must be "card" or "check")');
+    }
+
+
+    /**
      * Get the base transaction data.
      *
      * @return array
@@ -286,13 +440,41 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     public function getAVSHash()
     {
+        $paymentObject = $this->getPaymentObject();
         $parts   = array();
-        $parts[] = $this->getCard()->getAddress1();
-        $parts[] = $this->getCard()->getPostcode();
-        $parts[] = $this->getCard()->getCity();
-        $parts[] = $this->getCard()->getState();
-        $parts[] = $this->getCard()->getCountry();
+        $parts[] = $paymentObject->getAddress1();
+        $parts[] = $paymentObject->getPostcode();
+        $parts[] = $paymentObject->getCity();
+        $parts[] = $paymentObject->getState();
+        $parts[] = $paymentObject->getCountry();
         return implode('|', $parts);
+    }
+
+    /**
+     * Get the AVS Hash.
+     *
+     * Important Note about v12 or higher of the Web Service API: Merchants wishing to use
+     * V12 or higher of the API must implement the API HMAC hash security calculation.
+     * Further information on this subject can be found at the link below.
+     *
+     * @link https://support.payeezy.com/entries/22069302-api-security-hmac-hash
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+
+        $paymentObject = $this->getPaymentObject();
+        $parts   = array();
+        $parts['address1'] = $paymentObject->getAddress1();
+        $parts['address2'] = $paymentObject->getAddress2();
+        $parts['zip'] = $paymentObject->getPostcode();
+        $parts['city'] = $paymentObject->getCity();
+        $parts['state'] = $paymentObject->getState();
+        $parts['country_code'] = $paymentObject->getCountry();
+        $parts['phone_number'] = $paymentObject->getPhone();
+        $parts['phone_type'] = "N";
+        return $parts;
     }
 
     /**
@@ -345,7 +527,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
      */
     protected function getEndpoint()
     {
-        return ($this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint) . self::API_VERSION;
+        return ($this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint) . 'v' . $this->apiVersion;
     }
 
     /**
