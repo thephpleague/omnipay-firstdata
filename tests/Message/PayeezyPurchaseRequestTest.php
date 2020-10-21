@@ -35,7 +35,7 @@ class PayeezyPurchaseRequestTest extends TestCase
             'card' => $this->getValidCard(),
         ]);
 
-        $this->assertEquals(14,$request->getApiVersion());
+        $this->assertEquals(31,$request->getApiVersion());
         $data = $request->getData();
         $this->assertEquals('00', $data['transaction_type']);
         $this->assertEquals('4111111111111111', $data['cc_number']);

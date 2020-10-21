@@ -20,7 +20,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     const CONTENT_TYPE = 'application/json; charset=UTF-8';
 
     /** API version to use. See the note about the hashing requirements for v12 or higher. */
-    protected $apiVersion = 14;
+    protected $apiVersion = 31;
 
     /** @var string live endpoint URL base */
     protected $liveEndpoint = 'https://api.globalgatewaye4.firstdata.com/transaction/';
