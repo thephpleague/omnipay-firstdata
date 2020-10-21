@@ -2,6 +2,9 @@
 
 namespace Omnipay\FirstData;
 
+use Omnipay\Common\CreditCard;
+use Omnipay\Common\Exception\InvalidCreditCardException;
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Tests\GatewayTestCase;
 
 class PayeezyGatewayTest extends GatewayTestCase
@@ -58,4 +61,25 @@ class PayeezyGatewayTest extends GatewayTestCase
         $this->assertFalse($response->isRedirect());
         $this->assertEquals('ET181147::28513493', $response->getTransactionReference());
     }
+
+    public function testPurchaseFailureMissingAmount(){
+
+        $this->expectException(InvalidRequestException::class);
+
+        unset($this->options['amount']);
+        $response = $this->gateway->purchase($this->options)->send();
+    }
+
+    public function testPurchaseFailureInvalidCard(){
+        $this->expectException(InvalidCreditCardException::class);
+        $this->options['card'] = new CreditCard([
+            'firstName'            => 'Example',
+            'lastName'             => 'Customer',
+            'expiryMonth'          => '12',
+            'expiryYear'           => '2019',
+            'cvv'                  => '123',
+        ]);
+        $response = $this->gateway->purchase($this->options)->send();
+    }
+
 }
