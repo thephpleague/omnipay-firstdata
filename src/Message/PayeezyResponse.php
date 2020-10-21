@@ -8,6 +8,8 @@ namespace Omnipay\FirstData\Message;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
+use Omnipay\FirstData\Message\AchResponseHelper;
+use Omnipay\FirstData\Message\ResponseHelper;
 
 /**
  * First Data Payeezy Response
@@ -23,6 +25,8 @@ use Omnipay\Common\Message\RequestInterface;
  */
 class PayeezyResponse extends AbstractResponse
 {
+    use ResponseHelper, AchResponseHelper;
+
     public function __construct(RequestInterface $request, $data)
     {
         $this->request = $request;

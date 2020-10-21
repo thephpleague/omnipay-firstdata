@@ -309,7 +309,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     }
 
     /**
-     * Sets the card.
+     * Sets the ach.
      *
      * @param Ach $value
      * @return $this
@@ -319,8 +319,31 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
         if ($value && !$value instanceof Ach) {
             $value = new Ach($value);
         }
-        $this->paymentMethod = 'ach';
-        return $this->setParameter('ach', $value);
+
+        $ach = $this->setParameter('ach', $value);
+        $this->setPaymentMethod('ach');
+        return $ach;
+    }
+
+    /**
+     * Get the ach.
+     *
+     * @return Ach
+     */
+    public function getCheck()
+    {
+        return $this->getAch();
+    }
+
+    /**
+     * Sets the ach.
+     *
+     * @param Ach $value
+     * @return $this
+     */
+    public function setCheck($value)
+    {
+        return $this->setAch($value);
     }
 
     /**
@@ -465,7 +488,7 @@ abstract class PayeezyAbstractRequest extends \Omnipay\Common\Message\AbstractRe
     {
 
         $paymentObject = $this->getPaymentObject();
-        $parts   = array();
+        $parts = array();
         $parts['address1'] = $paymentObject->getAddress1();
         $parts['address2'] = $paymentObject->getAddress2();
         $parts['zip'] = $paymentObject->getPostcode();

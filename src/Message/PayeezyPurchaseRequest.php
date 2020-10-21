@@ -81,7 +81,14 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class PayeezyPurchaseRequest extends PayeezyAbstractRequest
 {
+
     protected $action = self::TRAN_PURCHASE;
+    const CUSTOMER_ID_TYPE = [
+        0 => "license",
+        1 => "ssn",
+        2 => "taxId",
+        3 => "militaryId"
+    ];
 
     public function getData()
     {
@@ -112,8 +119,6 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
             $this->getCard()->validate();
             $data['credit_card_type'] = self::getCardType($this->getCard()->getBrand());
             $data['cc_number'] = $this->getCard()->getNumber();
-            $data['cvd_code'] = $this->getCard()->getCvv();
-            $data['cvd_code'] = $this->getCard()->getCvv();
 
             $this->appendAVS($data);
             $this->appendCvv($data);
@@ -129,36 +134,34 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
     }
 
     protected function getAchData($data){
-        $this->validate('amount', 'card');
 
+        $this->validate('amount', 'ach');
+        $this->getAch()->validate();
 
         $data['amount'] = $this->getAmount();
         $data['currency_code'] = $this->getCurrency();
         $data['reference_no'] = $this->getTransactionId();
 
-        // add credit card details
-        if ($this->getCardReference()) {
-            $this->validate('tokenCardType');
-            $data['transarmor_token'] = $this->getCardReference();
-            $data['credit_card_type'] = $this->getTokenCardType();
-        } else {
-            $data['credit_card_type'] = self::getCardType($this->getAch()->getBrand());
-            $data['cc_number'] = $this->getCard()->getNumber();
-            $data['cvd_code'] = $this->getCard()->getCvv();
-            $data['cvd_code'] = $this->getCard()->getCvv();
+        $data['account_number'] = $this->getAch()->getAccountNumber();
+        $data['routing_number'] = $this->getAch()->getRoutingNumber();
+        $data['cardholder_name'] = $this->getAch()->getName();
 
-            $this->appendAVS($data);
-            $this->appendCvv($data);
-        }
-        $data['cardholder_name'] = $this->getCard()->getName();
-        $data['cc_expiry'] = $this->getCard()->getExpiryDate('my');
+        $data['check_type'] = $this->getAch()->getCheckType();
+        $data['check_number'] = $this->getAch()->getCheckNumber();
+
+
+        $this->appendAch($data);
+        $this->appendAchAuth($data);
+        $this->appendAVS($data);
 
         $data['client_ip'] = $this->getClientIp();
-        $data['client_email'] = $this->getCard()->getEmail();
-        $data['language'] = strtoupper($this->getCard()->getCountry());
+        $data['client_email'] = $this->getAch()->getEmail();
+        $data['language'] = strtoupper($this->getAch()->getCountry());
 
         return $data;
     }
+
+
 
     public function getTokenCardType()
     {
@@ -172,6 +175,7 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
 
     protected function appendCvv(&$data){
         $data['cvd_presence_ind'] = 1;
+
         if($this->getApiVersion() <= 13){
             $data['cc_verification_str2'] = $this->getCard()->getCvv();
         }else{
@@ -185,6 +189,45 @@ class PayeezyPurchaseRequest extends PayeezyAbstractRequest
             $data['cc_verification_str1'] = $this->getAVSHash();
         }else{
             $data['address'] = $this->getAddress();
+        }
+    }
+
+    protected function appendAch(&$data){
+        $data['release_type'] = $this->getAch()->getReleaseType();
+        $data['vip'] = $this->getAch()->getVip();
+        $data['clerk_id'] = $this->getAch()->getClerk();
+        $data['device_id'] = $this->getAch()->getDevice();
+        $data['micr'] = $this->getAch()->getMicr();
+        $data['ecommerce_flag'] = $this->getAch()->getEcommerceFlag();
+    }
+
+    protected function appendAchAuth(&$data){
+        $license = $this->getAch()->getLicense();
+        if($license){
+            $data['customer_id_type'] = 0;
+            $data['customer_id_number'] = $license;
+            return $data;
+        }
+
+        $SSN = $this->getAch()->getSSN();
+        if($SSN){
+            $data['customer_id_type'] = 1;
+            $data['customer_id_number'] = $SSN;
+            return $data;
+        }
+
+        $taxId = $this->getAch()->getTaxID();
+        if($taxId){
+            $data['customer_id_type'] = 2;
+            $data['customer_id_number'] = $taxId;
+            return $data;
+        }
+
+        $militaryId = $this->getAch()->getMilitaryId();
+        if($militaryId){
+            $data['customer_id_type'] = 3;
+            $data['customer_id_number'] = $militaryId;
+            return $data;
         }
     }
 }

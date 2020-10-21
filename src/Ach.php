@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * * accountNumber
  * * routingNumber
  * * checkNumber
+ *
  * * driversLicense
  * * driversLicenseState
  * * ssn
@@ -151,15 +152,13 @@ class Ach
     public function validate()
     {
         $requiredParameters = array(
-            'firstName' => 'first name',
-            'lastName' => 'last name',
+            'billingFirstName' => 'first name',
+            'billingLastName' => 'last name',
             'routingNumber' => 'routing number',
             'accountNumber' => 'account number',
             // 'checkNumber' => 'check number' // number => 'cehck number'
         );
 
-        var_dump($requiredParameters);
-        die();
 
         foreach ($requiredParameters as $key => $val) {
             if (!$this->getParameter($key)) {
@@ -169,10 +168,6 @@ class Ach
 
         if (!AchHelper::validateRoutingNumber($this->getRoutingNumber())) {
             throw new InvalidAchException('Routing Number is invalid');
-        }
-
-        if (!AchHelper::validateIBAN($this->getAccountNumber())) {
-            throw new InvalidAchException('Account Number is invalid');
         }
     }
 
@@ -319,6 +314,27 @@ class Ach
      * @return $this
      */
     public function setSocialSecurityNumber($value)
+    {
+        return $this->setParameter('ssn', $value);
+    }
+
+    /**
+     * Get the ach social security number.
+     *
+     * @return string
+     */
+    public function getSSN()
+    {
+        return $this->getParameter('ssn');
+    }
+
+    /**
+     * Sets the ach social security number.
+     *
+     * @param string $value
+     * @return $this
+     */
+    public function setSSN($value)
     {
         return $this->setParameter('ssn', $value);
     }
@@ -1460,7 +1476,7 @@ class Ach
     }
 
     /**
-     * Get the achholder's email address.
+     * Get the ach email address.
      *
      * @return string
      */
@@ -1470,7 +1486,7 @@ class Ach
     }
 
     /**
-     * Sets the achholder's email address.
+     * Sets the ach email address.
      *
      * @param string $value
      * @return $this
@@ -1481,7 +1497,7 @@ class Ach
     }
 
     /**
-     * Get the achholder's birthday.
+     * Get the ach birthday.
      *
      * @return string
      */
@@ -1493,7 +1509,7 @@ class Ach
     }
 
     /**
-     * Sets the achholder's birthday.
+     * Sets the ach birthday.
      *
      * @param string $value
      * @return $this
@@ -1510,7 +1526,7 @@ class Ach
     }
 
     /**
-     * Get the achholder's gender.
+     * Get the ach gender.
      *
      * @return string
      */
@@ -1520,7 +1536,7 @@ class Ach
     }
 
     /**
-     * Sets the achholder's gender.
+     * Sets the ach gender.
      *
      * @param string $value
      * @return $this
@@ -1529,4 +1545,5 @@ class Ach
     {
         return $this->setParameter('gender', $value);
     }
+
 }

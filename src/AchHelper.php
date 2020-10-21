@@ -16,11 +16,12 @@ class AchHelper
      * @return string
      */
     public static function validateRoutingNumber($routingNumber = 0) {
+
+
         $routingNumber = preg_replace('[\D]', '', $routingNumber); //only digits
         if(strlen($routingNumber) != 9) {
             return false;
         }
-
         $checkSum = 0;
         for ($i = 0, $j = strlen($routingNumber); $i < $j; $i+= 3 ) {
             //loop through routingNumber character by character
@@ -28,8 +29,7 @@ class AchHelper
             $checkSum += ($routingNumber[$i+1] * 7);
             $checkSum += ($routingNumber[$i+2]);
         }
-
-        return ($checkSum != 0 and ($checkSum % 10) == 0);
+        return ($checkSum != 0 && ($checkSum % 10) == 0);
     }
 
 

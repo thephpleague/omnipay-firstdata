@@ -1,0 +1,5 @@
+HTTP/1.1 201 OK
+Date: Tue, 11 Feb 2014 02:34:58 GMT
+Content-type: text/html; charset=utf-8
+
+{"transaction_error":0,"transaction_approved":1,"exact_resp_code":"00","exact_message":"Transaction Normal","bank_resp_code":"100","bank_message":"Approved","sequence_no":"000027","retrieval_ref_no":"200728","merchant_name":"PriceWaiter DEMO0243","merchant_address":"95 E10th St","merchant_city":"Bloomsburg","merchant_province":"Pennsylvania","merchant_country":"United States","merchant_postal":"17815","ctr":"========== TRANSACTION RECORD ==========","gateway_id":"HE6692-83","transaction_type":"00","amount":10,"transaction_tag":4549770020,"authorization_num":"ET173315","reference_no":"12345","client_ip":"1.2.3.4","client_email":"customer@example.com","currency_code":"USD","credit_card_type":"Telecheck","ecommerce_flag":"0","check_number":"123","customer_name":"Example Customer"}

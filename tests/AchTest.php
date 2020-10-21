@@ -12,13 +12,19 @@ class AchTest extends TestCase
 
     public function setUp()
     {
+        // [
+        //     'firstName'            => 'Example',
+        //     'lastName'             => 'Customer',
+        //     'routingNumber'        => '021000021',
+        //     'accountNumber'        => '2020',
+        //     'checkNumber'          => '123',
+        // ]
         $this->ach = new Ach;
-        $this->ach->setNumber('4111111111111111');
+        $this->ach->setRoutingNumber('021000021');
+        $this->ach->setAccountNumber('2020');
         $this->ach->setFirstName('Example');
         $this->ach->setLastName('Customer');
-        $this->ach->setExpiryMonth('4');
-        $this->ach->setExpiryYear(gmdate('Y')+2);
-        $this->ach->setCvv('123');
+        $this->ach->setCheckNumber('123');
     }
 
     public function testConstructWithParams()
@@ -38,17 +44,13 @@ class AchTest extends TestCase
     {
         $ach = new Ach(array(
             'name' => 'Example Customer',
-            'number' => '1234',
-            'expiryMonth' => 6,
-            'expiryYear' => 2016,
+            'checkNumber' => '123',
         ));
 
         $parameters = $ach->getParameters();
         $this->assertSame('Example', $parameters['billingFirstName']);
         $this->assertSame('Customer', $parameters['billingLastName']);
-        $this->assertSame('1234', $parameters['number']);
-        $this->assertSame(6, $parameters['expiryMonth']);
-        $this->assertSame(2016, $parameters['expiryYear']);
+        $this->assertSame('123', $parameters['checkNumber']);
     }
 
     /**
@@ -61,51 +63,51 @@ class AchTest extends TestCase
 
     /**
      * @expectedException \Omnipay\FirstData\Exception\InvalidAchException
-     * @expectedExceptionMessage The credit ach number is required
+     * @expectedExceptionMessage The routing number is required
      */
-    public function testValidateNumberRequired()
+    public function testValidateRoutingNumberRequired()
     {
-        $this->ach->setNumber(null);
+        $this->ach->setRoutingNumber(null);
         $this->ach->validate();
     }
 
     /**
      * @expectedException \Omnipay\FirstData\Exception\InvalidAchException
-     * @expectedExceptionMessage The expiration month is required
+     * @expectedExceptionMessage The account number is required
      */
-    public function testValidateExpiryMonthRequired()
+    public function testValidateAccountNumberRequired()
     {
-        $this->ach->setExpiryMonth(null);
+        $this->ach->setAccountNumber(null);
         $this->ach->validate();
     }
 
     /**
      * @expectedException \Omnipay\FirstData\Exception\InvalidAchException
-     * @expectedExceptionMessage The expiration year is required
+     * @expectedExceptionMessage The first name is required
      */
-    public function testValidateExpiryYearRequired()
+    public function testValidateFirstNameRequired()
     {
-        $this->ach->setExpiryYear(null);
+        $this->ach->setFirstName(null);
         $this->ach->validate();
     }
 
     /**
      * @expectedException \Omnipay\FirstData\Exception\InvalidAchException
-     * @expectedExceptionMessage Card has expired
+     * @expectedExceptionMessage The last name is required
      */
-    public function testValidateExpiryDate()
+    public function testValidateLastNameRequired()
     {
-        $this->ach->setExpiryYear(gmdate('Y')-1);
+        $this->ach->setLastName(null);
         $this->ach->validate();
     }
 
     /**
      * @expectedException \Omnipay\FirstData\Exception\InvalidAchException
-     * @expectedExceptionMessage Card number is invalid
+     * @expectedExceptionMessage Routing Number is invalid
      */
-    public function testValidateNumber()
+    public function testValidateRoutingNumber()
     {
-        $this->ach->setNumber('4111111111111110');
+        $this->ach->setRoutingNumber('021000020');
         $this->ach->validate();
     }
 
@@ -153,151 +155,6 @@ class AchTest extends TestCase
         $this->ach->setName('Bob John Smith');
         $this->assertEquals('Bob', $this->ach->getFirstName());
         $this->assertEquals('John Smith', $this->ach->getLastName());
-    }
-
-    public function testNumber()
-    {
-        $this->ach->setNumber('4000000000000000');
-        $this->assertEquals('4000000000000000', $this->ach->getNumber());
-    }
-
-    public function testSetNumberStripsNonDigits()
-    {
-        $this->ach->setNumber('4000 0000 00b00 0000');
-        $this->assertEquals('4000000000000000', $this->ach->getNumber());
-    }
-
-    public function testGetNumberLastFourNull()
-    {
-        $this->ach->setNumber(null);
-        $this->assertNull($this->ach->getNumberLastFour());
-    }
-
-    public function testGetNumberLastFour()
-    {
-        $this->ach->setNumber('4000000000001234');
-        $this->assertSame('1234', $this->ach->getNumberLastFour());
-    }
-
-    public function testGetNumberLastFourNonDigits()
-    {
-        $this->ach->setNumber('4000 0000 0000 12x34');
-        $this->assertSame('1234', $this->ach->getNumberLastFour());
-    }
-
-    public function testGetNumberMasked()
-    {
-        $this->ach->setNumber('4000000000001234');
-
-        $this->assertSame('XXXXXXXXXXXX1234', $this->ach->getNumberMasked());
-    }
-
-    public function testGetNumberMaskedNonDigits()
-    {
-        $this->ach->setNumber('4000 0000 0000 12x34');
-
-        $this->assertSame('XXXXXXXXXXXX1234', $this->ach->getNumberMasked());
-    }
-
-    public function testExpiryMonth()
-    {
-        $this->ach->setExpiryMonth(9);
-        $this->assertSame(9, $this->ach->getExpiryMonth());
-    }
-
-    public function testExpiryMonthLeadingZeros()
-    {
-        $this->ach->setExpiryMonth('09');
-        $this->assertSame(9, $this->ach->getExpiryMonth());
-    }
-
-    public function testExpiryYear()
-    {
-        $this->ach->setExpiryYear(2012);
-        $this->assertSame(2012, $this->ach->getExpiryYear());
-    }
-
-    public function testExpiryYearTwoDigits()
-    {
-        $this->ach->setExpiryYear('12');
-        $this->assertSame(2012, $this->ach->getExpiryYear());
-    }
-
-    public function testExpiryDate()
-    {
-        $this->assertSame($this->ach, $this->ach->setExpiryMonth('09'));
-        $this->assertSame($this->ach, $this->ach->setExpiryYear('2012'));
-        $this->assertSame('092012', $this->ach->getExpiryDate('mY'));
-    }
-
-    public function testStartMonth()
-    {
-        $this->ach->setStartMonth(9);
-        $this->assertSame(9, $this->ach->getStartMonth());
-    }
-
-    public function testStartMonthLeadingZeros()
-    {
-        $this->ach->setStartMonth('09');
-        $this->assertSame(9, $this->ach->getStartMonth());
-    }
-
-    public function testStartYear()
-    {
-        $this->ach->setStartYear(2012);
-        $this->assertSame(2012, $this->ach->getStartYear());
-    }
-
-    public function testStartYearTwoDigits()
-    {
-        $this->ach->setStartYear('12');
-        $this->assertSame(2012, $this->ach->getStartYear());
-    }
-
-    public function testStartDate()
-    {
-        $this->ach->setStartMonth('11');
-        $this->ach->setStartYear('2012');
-        $this->assertEquals('112012', $this->ach->getStartDate('mY'));
-    }
-
-    public function testCvv()
-    {
-        $this->ach->setCvv('456');
-        $this->assertEquals('456', $this->ach->getCvv());
-    }
-
-    public function testTracks()
-    {
-        $this->ach->setTracks('%B4242424242424242^SMITH/JOHN ^1520126100000000000000444000000?;4242424242424242=15201269999944401?');
-        $this->assertSame('%B4242424242424242^SMITH/JOHN ^1520126100000000000000444000000?;4242424242424242=15201269999944401?', $this->ach->getTracks());
-    }
-
-    public function testShouldReturnTrack1()
-    {
-        $this->ach->setTracks('%B4242424242424242^SMITH/JOHN ^1520126100000000000000444000000?;4242424242424242=15201269999944401?');
-        $actual = $this->ach->getTrack1();
-        $this->assertEquals('%B4242424242424242^SMITH/JOHN ^1520126100000000000000444000000?', $actual);
-    }
-
-    public function testShouldReturnTrack2()
-    {
-        $this->ach->setTracks('%B4242424242424242^SMITH/JOHN ^1520126100000000000000444000000?;4242424242424242=15201269999944401?');
-        $actual = $this->ach->getTrack2();
-        $this->assertEquals(';4242424242424242=15201269999944401?', $actual);
-    }
-
-    public function testShouldReturnNoTrack()
-    {
-        $this->ach->setTracks(null);
-        $actual = $this->ach->getTrack2();
-        $this->assertNull($actual);
-    }
-
-    public function testIssueNumber()
-    {
-        $this->ach->setIssueNumber('12');
-        $this->assertSame('12', $this->ach->getIssueNumber());
     }
 
     public function testBillingTitle()
@@ -596,4 +453,128 @@ class AchTest extends TestCase
         $this->assertEquals('female', $this->ach->getGender());
     }
 
+    /**
+     * Ach Specific starts here
+     */
+    public function testCheckNumber()
+    {
+        $this->ach->setCheckNumber('123');
+        $this->assertEquals('123', $this->ach->getCheckNumber());
+
+        $ach = new Ach(array('checkNumber' => '123'));
+        $this->assertEquals('123', $ach->getCheckNumber());
+    }
+
+    public function testCheckType()
+    {
+        $this->ach->setCheckType('P');
+        $this->assertEquals('P', $this->ach->getCheckType());
+
+        $ach = new Ach(array('checkType' => 'P'));
+        $this->assertEquals('P', $ach->getCheckType());
+    }
+
+    public function testReleaseType()
+    {
+        $this->ach->setReleaseType('R');
+        $this->assertEquals('R', $this->ach->getReleaseType());
+
+        $ach = new Ach(array('releaseType' => 'R'));
+        $this->assertEquals('R', $ach->getReleaseType());
+    }
+
+    public function testVIP()
+    {
+        $this->ach->setVIP(true);
+        $this->assertEquals(true, $this->ach->getVIP());
+
+        $ach = new Ach(array('vip' => true));
+        $this->assertEquals(true, $ach->getVIP());
+    }
+
+    public function testClerk()
+    {
+        $this->ach->setClerk("ABCD");
+        $this->assertEquals("ABCD", $this->ach->getClerk());
+
+        $ach = new Ach(array('clerk' => "ABCD"));
+        $this->assertEquals("ABCD", $ach->getClerk());
+    }
+
+    public function testDevice()
+    {
+        $this->ach->setDevice("ABCD");
+        $this->assertEquals("ABCD", $this->ach->getDevice());
+
+        $ach = new Ach(array('device' => "ABCD"));
+        $this->assertEquals("ABCD", $ach->getDevice());
+    }
+
+    public function testMicr()
+    {
+        $this->ach->setMicr("ABCD");
+        $this->assertEquals("ABCD", $this->ach->getMicr());
+
+        $ach = new Ach(array('micr' => "ABCD"));
+        $this->assertEquals("ABCD", $ach->getMicr());
+    }
+
+    public function testEcommerceFlag()
+    {
+        $this->ach->setEcommerceFlag(7);
+        $this->assertEquals(7, $this->ach->getEcommerceFlag());
+
+        $ach = new Ach(array('ecommerce_flag' => 7));
+        $this->assertEquals(7, $ach->getEcommerceFlag());
+    }
+
+    public function testDriversLicense()
+    {
+        $this->ach->setLicense("123ABC");
+        $this->assertEquals("123ABC", $this->ach->getLicense());
+
+        $ach = new Ach(array('license' => "123ABC"));
+        $this->assertEquals("123ABC", $ach->getLicense());
+    }
+
+    public function testDriversLicenseState()
+    {
+        $this->ach->setLicenseState("PA");
+        $this->assertEquals("PA", $this->ach->getLicenseState());
+
+        $ach = new Ach(array('license_state' => "PA"));
+        $this->assertEquals("PA", $ach->getLicenseState());
+    }
+
+    public function testSSN()
+    {
+        $this->ach->setSSN("123ABC");
+        $this->assertEquals("123ABC", $this->ach->getSSN());
+
+        $this->ach->setSocialSecurityNumber("123ABC");
+        $this->assertEquals("123ABC", $this->ach->getSocialSecurityNumber());
+
+        $ach = new Ach(array('ssn' => "123ABC"));
+        $this->assertEquals("123ABC", $ach->getSSN());
+        $this->assertEquals("123ABC", $ach->getSocialSecurityNumber());
+
+    }
+
+    public function testTaxID()
+    {
+        $this->ach->setTaxID("123ABC");
+        $this->assertEquals("123ABC", $this->ach->getTaxID());
+
+        $ach = new Ach(array('taxId' => "123ABC"));
+        $this->assertEquals("123ABC", $ach->getTaxID());
+    }
+
+    public function testMilitaryID()
+    {
+        $this->ach->setMilitaryID("123ABC");
+        $this->assertEquals("123ABC", $this->ach->getMilitaryID());
+
+        $ach = new Ach(array('militaryId' => "123ABC"));
+        $this->assertEquals("123ABC", $ach->getMilitaryID());
+    }
 }

@@ -81,4 +81,5 @@ class PayeezyGatewayTest extends GatewayTestCase
         ]);
         $response = $this->gateway->purchase($this->options)->send();
     }
+
 }
